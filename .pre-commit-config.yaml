@@ -1,0 +1,39 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-toml
+      - id: check-yaml
+      - id: end-of-file-fixer
+        exclude: ^frontend/src/client/
+      - id: trailing-whitespace
+        exclude: ^frontend/src/client/
+
+  # Backend tools run from backend/.venv, so their versions come from uv.lock.
+  - repo: local
+    hooks:
+      - id: ruff
+        name: ruff (backend)
+        entry: bash -c "cd backend && uv run ruff check --fix --exit-non-zero-on-fix . && uv run ruff format ."
+        language: system
+        types: [python]
+        pass_filenames: false
+      - id: mypy
+        name: mypy (backend)
+        entry: bash -c "cd backend && uv run mypy app"
+        language: system
+        types: [python]
+        pass_filenames: false
+      - id: biome
+        name: biome (frontend)
+        entry: bash -c "cd frontend && npx biome check src"
+        language: system
+        files: ^frontend/src/
+        pass_filenames: false
+      - id: tsc
+        name: tsc (frontend)
+        entry: bash -c "cd frontend && npx tsc --noEmit"
+        language: system
+        files: ^frontend/src/
+        pass_filenames: false

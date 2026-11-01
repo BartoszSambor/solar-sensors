@@ -1,0 +1,31 @@
+[project]
+name = "solar-sensors-backend"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi==0.162.0",
+    "uvicorn[standard]==0.54.0",
+    "sqlalchemy==2.1.6",
+    "psycopg[binary]==3.3.6",
+    "alembic==1.20.1",
+    "pydantic==2.14.2",
+    "pydantic-settings==2.16.2",
+    "pwdlib[argon2]==0.3.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2",
+    "mypy>=2.4",
+    "ruff>=0.17",
+    "testcontainers[postgres]>=4.15",
+    "httpx2>=2.16.0",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "C4"]
+
+[tool.mypy]
+plugins = ["pydantic.mypy"]
+strict = true
+ignore_missing_imports = true
