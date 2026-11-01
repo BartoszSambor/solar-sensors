@@ -7,8 +7,10 @@ from app.auth.models import (
     AuthSession,  # noqa: F401  (register models on Base.metadata)
 )
 from app.config import settings
+from app.measurements.models import Measurement  # noqa: F401
 from app.models import Base
 from app.sensors.models import Sensor  # noqa: F401
+from app.series.models import Series  # noqa: F401
 from app.users.models import User  # noqa: F401
 
 config = context.config

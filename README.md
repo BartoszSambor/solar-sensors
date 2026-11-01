@@ -30,6 +30,8 @@ docker compose exec backend python -m app.manage delete-user <username>
 
 ```
 backend/    FastAPI app (app/), Alembic migrations (alembic/), tests (tests/)
+            dev scripts (scripts/)
+docs/       database.mmd - Mermaid ER diagram, regenerated from the models by pre-commit
 frontend/   React app (src/), generated API client (src/client/), nginx config
 ```
 

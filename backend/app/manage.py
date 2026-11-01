@@ -19,7 +19,9 @@ from app.auth.models import (
     AuthSession,  # noqa: F401  (register models on Base.metadata)
 )
 from app.database.core import SessionFactory
+from app.measurements.models import Measurement  # noqa: F401
 from app.sensors.models import Sensor  # noqa: F401
+from app.series.models import Series  # noqa: F401
 from app.users.models import User
 from app.users.schemas import UserCreate
 from app.users.service import user_service
