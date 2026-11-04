@@ -10,7 +10,7 @@ from app.users.service import user_service
 
 logger = logging.getLogger(__name__)
 
-# There is no series API yet, so the series are seeded.
+# Created on first start so a fresh database has series to attach sensors to.
 DEFAULT_SERIES = [
     {
         "name": "Temperature",

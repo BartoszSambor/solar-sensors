@@ -6,6 +6,7 @@ from .auth.router import router as auth_router
 from .config import settings
 from .measurements.router import router as measurements_router
 from .sensors.router import router as sensors_router
+from .series.router import router as series_router
 from .users.router import router as users_router
 
 
@@ -33,6 +34,7 @@ app.include_router(
 app.include_router(
     measurements_router, prefix="/api/measurements", tags=["Measurements"]
 )
+app.include_router(series_router, prefix="/api/series", tags=["Series"])
 
 
 @app.get("/health", tags=["Health Check"])

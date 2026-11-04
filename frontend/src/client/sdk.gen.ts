@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { ChangePasswordData, ChangePasswordErrors, ChangePasswordResponses, CreateMeasurementData, CreateMeasurementErrors, CreateMeasurementResponses, CreateSensorData, CreateSensorErrors, CreateSensorResponses, DeleteSensorData, DeleteSensorErrors, DeleteSensorResponses, GetHealthData, GetHealthResponses, GetMeasurementData, GetMeasurementErrors, GetMeasurementResponses, GetSensorData, GetSensorErrors, GetSensorResponses, ListMeasurementsData, ListMeasurementsErrors, ListMeasurementsResponses, ListSensorsData, ListSensorsResponses, ListUsersData, ListUsersErrors, ListUsersResponses, LoginData, LoginErrors, LoginResponses, LogoutData, LogoutResponses } from './types.gen';
+import type { ChangePasswordData, ChangePasswordErrors, ChangePasswordResponses, CreateMeasurementData, CreateMeasurementErrors, CreateMeasurementResponses, CreateSensorData, CreateSensorErrors, CreateSensorResponses, CreateSeriesData, CreateSeriesErrors, CreateSeriesResponses, DeleteSensorData, DeleteSensorErrors, DeleteSensorResponses, DeleteSeriesData, DeleteSeriesErrors, DeleteSeriesResponses, GetHealthData, GetHealthResponses, GetMeasurementData, GetMeasurementErrors, GetMeasurementResponses, GetSensorData, GetSensorErrors, GetSensorResponses, GetSeriesData, GetSeriesErrors, GetSeriesResponses, ListMeasurementsData, ListMeasurementsErrors, ListMeasurementsResponses, ListSensorsData, ListSensorsResponses, ListSeriesData, ListSeriesResponses, ListUsersData, ListUsersErrors, ListUsersResponses, LoginData, LoginErrors, LoginResponses, LogoutData, LogoutResponses, UpdateSeriesData, UpdateSeriesErrors, UpdateSeriesResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -127,6 +127,57 @@ export const getMeasurement = <ThrowOnError extends boolean = true>(options: Opt
     responseType: 'json',
     url: '/api/measurements/{measurement_id}',
     ...options
+});
+
+/**
+ * List Series
+ */
+export const listSeries = <ThrowOnError extends boolean = true>(options?: Options<ListSeriesData, ThrowOnError>): RequestResult<ListSeriesResponses, unknown, ThrowOnError> => (options?.client ?? client).get<ListSeriesResponses, unknown, ThrowOnError>({
+    responseType: 'json',
+    url: '/api/series',
+    ...options
+});
+
+/**
+ * Create Series
+ */
+export const createSeries = <ThrowOnError extends boolean = true>(options: Options<CreateSeriesData, ThrowOnError>): RequestResult<CreateSeriesResponses, CreateSeriesErrors, ThrowOnError> => (options.client ?? client).post<CreateSeriesResponses, CreateSeriesErrors, ThrowOnError>({
+    responseType: 'json',
+    url: '/api/series',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Delete Series
+ *
+ * Deletes the series together with all its sensors and measurements.
+ */
+export const deleteSeries = <ThrowOnError extends boolean = true>(options: Options<DeleteSeriesData, ThrowOnError>): RequestResult<DeleteSeriesResponses, DeleteSeriesErrors, ThrowOnError> => (options.client ?? client).delete<DeleteSeriesResponses, DeleteSeriesErrors, ThrowOnError>({ url: '/api/series/{series_id}', ...options });
+
+/**
+ * Get Series
+ */
+export const getSeries = <ThrowOnError extends boolean = true>(options: Options<GetSeriesData, ThrowOnError>): RequestResult<GetSeriesResponses, GetSeriesErrors, ThrowOnError> => (options.client ?? client).get<GetSeriesResponses, GetSeriesErrors, ThrowOnError>({
+    responseType: 'json',
+    url: '/api/series/{series_id}',
+    ...options
+});
+
+/**
+ * Update Series
+ */
+export const updateSeries = <ThrowOnError extends boolean = true>(options: Options<UpdateSeriesData, ThrowOnError>): RequestResult<UpdateSeriesResponses, UpdateSeriesErrors, ThrowOnError> => (options.client ?? client).put<UpdateSeriesResponses, UpdateSeriesErrors, ThrowOnError>({
+    responseType: 'json',
+    url: '/api/series/{series_id}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
 });
 
 /**

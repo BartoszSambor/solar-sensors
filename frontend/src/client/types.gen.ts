@@ -145,6 +145,70 @@ export type SensorsList = {
 };
 
 /**
+ * SeriesCreate
+ */
+export type SeriesCreate = {
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Minvalue
+     */
+    minValue: number;
+    /**
+     * Maxvalue
+     */
+    maxValue: number;
+    /**
+     * Color
+     */
+    color: string;
+    /**
+     * Icon
+     */
+    icon: string;
+    /**
+     * Unit
+     */
+    unit: string;
+};
+
+/**
+ * SeriesRead
+ */
+export type SeriesRead = {
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Minvalue
+     */
+    minValue: number;
+    /**
+     * Maxvalue
+     */
+    maxValue: number;
+    /**
+     * Color
+     */
+    color: string;
+    /**
+     * Icon
+     */
+    icon: string;
+    /**
+     * Unit
+     */
+    unit: string;
+    /**
+     * Id
+     */
+    id: number;
+};
+
+/**
  * UserListResponse
  */
 export type UserListResponse = {
@@ -546,6 +610,139 @@ export type GetMeasurementResponses = {
 };
 
 export type GetMeasurementResponse = GetMeasurementResponses[keyof GetMeasurementResponses];
+
+export type ListSeriesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/series';
+};
+
+export type ListSeriesResponses = {
+    /**
+     * Response List Series
+     *
+     * Successful Response
+     */
+    200: Array<SeriesRead>;
+};
+
+export type ListSeriesResponse = ListSeriesResponses[keyof ListSeriesResponses];
+
+export type CreateSeriesData = {
+    body: SeriesCreate;
+    path?: never;
+    query?: never;
+    url: '/api/series';
+};
+
+export type CreateSeriesErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateSeriesError = CreateSeriesErrors[keyof CreateSeriesErrors];
+
+export type CreateSeriesResponses = {
+    /**
+     * Successful Response
+     */
+    201: SeriesRead;
+};
+
+export type CreateSeriesResponse = CreateSeriesResponses[keyof CreateSeriesResponses];
+
+export type DeleteSeriesData = {
+    body?: never;
+    path: {
+        /**
+         * Series Id
+         */
+        series_id: number;
+    };
+    query?: never;
+    url: '/api/series/{series_id}';
+};
+
+export type DeleteSeriesErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteSeriesError = DeleteSeriesErrors[keyof DeleteSeriesErrors];
+
+export type DeleteSeriesResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type DeleteSeriesResponse = DeleteSeriesResponses[keyof DeleteSeriesResponses];
+
+export type GetSeriesData = {
+    body?: never;
+    path: {
+        /**
+         * Series Id
+         */
+        series_id: number;
+    };
+    query?: never;
+    url: '/api/series/{series_id}';
+};
+
+export type GetSeriesErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetSeriesError = GetSeriesErrors[keyof GetSeriesErrors];
+
+export type GetSeriesResponses = {
+    /**
+     * Successful Response
+     */
+    200: SeriesRead;
+};
+
+export type GetSeriesResponse = GetSeriesResponses[keyof GetSeriesResponses];
+
+export type UpdateSeriesData = {
+    body: SeriesCreate;
+    path: {
+        /**
+         * Series Id
+         */
+        series_id: number;
+    };
+    query?: never;
+    url: '/api/series/{series_id}';
+};
+
+export type UpdateSeriesErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateSeriesError = UpdateSeriesErrors[keyof UpdateSeriesErrors];
+
+export type UpdateSeriesResponses = {
+    /**
+     * Successful Response
+     */
+    200: SeriesRead;
+};
+
+export type UpdateSeriesResponse = UpdateSeriesResponses[keyof UpdateSeriesResponses];
 
 export type GetHealthData = {
     body?: never;
