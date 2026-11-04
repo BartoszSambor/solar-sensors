@@ -4,6 +4,7 @@ import {
 	Box,
 	Button,
 	IconButton,
+	MenuItem,
 	Paper,
 	TextField,
 } from "@mui/material";
@@ -13,6 +14,7 @@ import {
 	createSensor,
 	deleteSensor,
 	listSensors,
+	listSeries,
 	type SensorRead,
 } from "@/client";
 import PageLayout from "../../components/common/PageLayout";
@@ -27,7 +29,10 @@ const SensorsTablePage = () => {
 		async () => (await listSensors()).data,
 		reloadKey,
 	);
+	const { data: seriesList } = useFetch(async () => (await listSeries()).data);
 	const reload = () => setReloadKey((key) => key + 1);
+	const seriesName = (id: number) =>
+		seriesList?.find((series) => series.id === id)?.name ?? id;
 
 	const onCreate = async (e: FormEvent) => {
 		e.preventDefault();
@@ -55,7 +60,13 @@ const SensorsTablePage = () => {
 	const columns: GridColDef<SensorRead>[] = [
 		{ field: "id", headerName: "ID", width: 90 },
 		{ field: "name", headerName: "Name", flex: 1, minWidth: 150 },
-		{ field: "seriesId", headerName: "Series", flex: 1, minWidth: 150 },
+		{
+			field: "seriesId",
+			headerName: "Series",
+			flex: 1,
+			minWidth: 150,
+			valueFormatter: (value: number) => seriesName(value),
+		},
 		{
 			field: "actions",
 			headerName: "",
@@ -88,13 +99,20 @@ const SensorsTablePage = () => {
 					onChange={(e) => setName(e.target.value)}
 				/>
 				<TextField
-					label="Series ID"
-					type="number"
+					select
+					label="Series"
 					size="small"
 					required
+					sx={{ minWidth: 180 }}
 					value={seriesId}
 					onChange={(e) => setSeriesId(e.target.value)}
-				/>
+				>
+					{(seriesList ?? []).map((series) => (
+						<MenuItem key={series.id} value={series.id}>
+							{series.name} ({series.unit})
+						</MenuItem>
+					))}
+				</TextField>
 				<Button type="submit" variant="contained">
 					Add Sensor
 				</Button>

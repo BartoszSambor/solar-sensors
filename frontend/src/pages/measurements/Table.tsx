@@ -5,10 +5,12 @@ import {
 	createMeasurement,
 	type ListMeasurementsData,
 	listMeasurements,
+	listSeries,
 	type MeasurementRead,
 } from "@/client";
 import PageLayout from "../../components/common/PageLayout";
 import { errorMessage, useFetch } from "../../utils/useFetch";
+import MeasurementsChart from "./Chart";
 
 type Query = NonNullable<ListMeasurementsData["query"]>;
 
@@ -16,23 +18,9 @@ type Query = NonNullable<ListMeasurementsData["query"]>;
 const toIso = (local: string) =>
 	local ? new Date(local).toISOString() : undefined;
 
-const columns: GridColDef<MeasurementRead>[] = [
-	{ field: "id", headerName: "ID", width: 90 },
-	{ field: "seriesId", headerName: "Series", width: 100 },
-	{ field: "sensorId", headerName: "Sensor", width: 100 },
-	{ field: "value", headerName: "Value", width: 120 },
-	{
-		field: "timestamp",
-		headerName: "Timestamp",
-		flex: 1,
-		minWidth: 200,
-		valueFormatter: (value: string) => new Date(value).toLocaleString(),
-	},
-];
-
 const MeasurementsTablePage = () => {
 	// Filter form state, applied to `query` on submit.
-	const [series, setSeries] = useState("");
+	const [series, setSeries] = useState<number[]>([]);
 	const [from, setFrom] = useState("");
 	const [to, setTo] = useState("");
 	const [sort, setSort] = useState<Query["sort"]>("-timestamp");
@@ -45,16 +33,49 @@ const MeasurementsTablePage = () => {
 	const [timestamp, setTimestamp] = useState("");
 	const [actionError, setActionError] = useState<string>();
 	const [reloadKey, setReloadKey] = useState(0);
+	// Measurement clicked in the table, highlighted in the chart.
+	const [selected, setSelected] = useState<MeasurementRead>();
 
 	const { data, loading, error } = useFetch(
 		async () => (await listMeasurements({ query })).data,
 		`${JSON.stringify(query)}-${reloadKey}`,
 	);
+	const { data: seriesList = [] } = useFetch(
+		async () => (await listSeries()).data,
+	);
+	const seriesName = (id: number) =>
+		seriesList.find((s) => s.id === id)?.name ?? id;
+	// Chart lines: the filtered series, or every series that has data.
+	const filteredIds = query.series?.split(",").map(Number);
+	const chartSeries = seriesList.filter((s) =>
+		filteredIds
+			? filteredIds.includes(s.id)
+			: data?.some((m) => m.seriesId === s.id),
+	);
+
+	const columns: GridColDef<MeasurementRead>[] = [
+		{ field: "id", headerName: "ID", width: 90 },
+		{
+			field: "seriesId",
+			headerName: "Series",
+			width: 160,
+			valueFormatter: (value: number) => seriesName(value),
+		},
+		{ field: "sensorId", headerName: "Sensor", width: 100 },
+		{ field: "value", headerName: "Value", width: 120 },
+		{
+			field: "timestamp",
+			headerName: "Timestamp",
+			flex: 1,
+			minWidth: 200,
+			valueFormatter: (value: string) => new Date(value).toLocaleString(),
+		},
+	];
 
 	const onFilter = (e: FormEvent) => {
 		e.preventDefault();
 		setQuery({
-			series: series.replace(/\s/g, "") || undefined,
+			series: series.join(",") || undefined,
 			from: toIso(from),
 			to: toIso(to),
 			sort,
@@ -127,12 +148,20 @@ const MeasurementsTablePage = () => {
 				sx={{ p: 2, mb: 2, display: "flex", gap: 2, flexWrap: "wrap" }}
 			>
 				<TextField
-					label="Series IDs"
-					placeholder="e.g. 1,2"
+					select
+					label="Series (all if empty)"
 					size="small"
+					sx={{ minWidth: 220 }}
+					slotProps={{ select: { multiple: true } }}
 					value={series}
-					onChange={(e) => setSeries(e.target.value)}
-				/>
+					onChange={(e) => setSeries(e.target.value as unknown as number[])}
+				>
+					{seriesList.map((s) => (
+						<MenuItem key={s.id} value={s.id}>
+							{s.name} ({s.unit})
+						</MenuItem>
+					))}
+				</TextField>
 				<TextField
 					label="From"
 					type="datetime-local"
@@ -171,13 +200,20 @@ const MeasurementsTablePage = () => {
 					Apply
 				</Button>
 			</Paper>
+			<Paper sx={{ p: 2, mb: 2 }}>
+				<MeasurementsChart
+					measurements={data ?? []}
+					series={chartSeries}
+					selected={selected}
+				/>
+			</Paper>
 			<Box sx={{ height: 500 }}>
 				<DataGrid
 					rows={data ?? []}
 					columns={columns}
 					// Only the first load shows the overlay; reloads keep the old rows.
 					loading={loading && !data}
-					disableRowSelectionOnClick
+					onRowClick={({ row }) => setSelected(row)}
 				/>
 			</Box>
 		</PageLayout>
