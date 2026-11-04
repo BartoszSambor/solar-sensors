@@ -37,3 +37,6 @@ def get_current_user(session: CurrentSession) -> User:
 
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
+
+# For routes that need a signed-in user but don't use it: dependencies=[login_required]
+login_required = Depends(get_current_user)

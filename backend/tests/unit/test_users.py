@@ -99,10 +99,10 @@ def test_delete_user(db_session: Session):
 # --- Router Tests ---
 
 
-def test_list_users_api(client: TestClient, db_session: Session):
+def test_list_users_api(admin_client: TestClient, db_session: Session):
     user_service.create_user(
         db_session,
         UserCreate(username="listuser_api", password="longenoughpassword"),
     )
-    response = client.get("/api/v1/users/")
+    response = admin_client.get("/api/v1/users/")
     assert response.status_code == 200

@@ -3,7 +3,7 @@ from typing import Annotated, Literal
 
 from fastapi import APIRouter, HTTPException, Query, status
 
-from ..dependencies import DbSession
+from ..dependencies import DbSession, login_required
 from ..sensors.models import Sensor
 from ..series.models import Series
 from .models import Measurement
@@ -33,7 +33,12 @@ def list_measurements(
     )
 
 
-@router.post("", response_model=MeasurementRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "",
+    response_model=MeasurementRead,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[login_required],
+)
 def create_measurement(
     measurement_in: MeasurementCreate,
     db: DbSession,

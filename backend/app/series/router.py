@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status
 
-from ..dependencies import DbSession
+from ..dependencies import DbSession, login_required
 from .models import Series
 from .schemas import SeriesCreate, SeriesRead
 from .service import series_service
@@ -30,7 +30,12 @@ def list_series(db: DbSession) -> list[Series]:
     return list(series_service.list_series(db))
 
 
-@router.post("", response_model=SeriesRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "",
+    response_model=SeriesRead,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[login_required],
+)
 def create_series(series_in: SeriesCreate, db: DbSession) -> Series:
     _check_name_free(db, series_in.name)
     return series_service.create_series(db, series_in)
@@ -41,14 +46,18 @@ def get_series(series_id: int, db: DbSession) -> Series:
     return _get_series_or_404(db, series_id)
 
 
-@router.put("/{series_id}", response_model=SeriesRead)
+@router.put("/{series_id}", response_model=SeriesRead, dependencies=[login_required])
 def update_series(series_id: int, series_in: SeriesCreate, db: DbSession) -> Series:
     series = _get_series_or_404(db, series_id)
     _check_name_free(db, series_in.name, series_id)
     return series_service.update_series(db, series, series_in)
 
 
-@router.delete("/{series_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{series_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[login_required],
+)
 def delete_series(series_id: int, db: DbSession) -> None:
     """Deletes the series together with all its sensors and measurements."""
     series_service.delete_series(db, _get_series_or_404(db, series_id))

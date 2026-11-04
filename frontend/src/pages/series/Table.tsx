@@ -18,6 +18,7 @@ import {
 	updateSeries,
 } from "@/client";
 import PageLayout from "../../components/common/PageLayout";
+import { isLoggedIn } from "../../utils/auth";
 import { errorMessage, useFetch } from "../../utils/useFetch";
 
 // Numbers are kept as strings so the inputs can be cleared or hold "-".
@@ -32,6 +33,8 @@ const emptyForm = {
 
 const SeriesTablePage = () => {
 	const [reloadKey, setReloadKey] = useState(0);
+	// Anonymous users can browse; only signed-in users can change data.
+	const canEdit = isLoggedIn();
 	const [form, setForm] = useState(emptyForm);
 	const [editedId, setEditedId] = useState<number>();
 	const [actionError, setActionError] = useState<string>();
@@ -151,42 +154,46 @@ const SeriesTablePage = () => {
 
 	return (
 		<PageLayout error={error}>
-			<Paper
-				component="form"
-				onSubmit={onSubmit}
-				sx={{ p: 2, mb: 2, display: "flex", gap: 2, flexWrap: "wrap" }}
-			>
-				<TextField label="Name" size="small" required {...field("name")} />
-				<TextField
-					label="Min value"
-					type="number"
-					size="small"
-					required
-					slotProps={{ htmlInput: { step: "any" } }}
-					{...field("minValue")}
-				/>
-				<TextField
-					label="Max value"
-					type="number"
-					size="small"
-					required
-					slotProps={{ htmlInput: { step: "any" } }}
-					{...field("maxValue")}
-				/>
-				<TextField label="Unit" size="small" required {...field("unit")} />
-				<TextField
-					label="Color"
-					type="color"
-					size="small"
-					sx={{ width: 90 }}
-					{...field("color")}
-				/>
-				<TextField label="Icon" size="small" required {...field("icon")} />
-				<Button type="submit" variant="contained">
-					{editedId === undefined ? "Add Series" : "Save"}
-				</Button>
-				{editedId !== undefined && <Button onClick={resetForm}>Cancel</Button>}
-			</Paper>
+			{canEdit && (
+				<Paper
+					component="form"
+					onSubmit={onSubmit}
+					sx={{ p: 2, mb: 2, display: "flex", gap: 2, flexWrap: "wrap" }}
+				>
+					<TextField label="Name" size="small" required {...field("name")} />
+					<TextField
+						label="Min value"
+						type="number"
+						size="small"
+						required
+						slotProps={{ htmlInput: { step: "any" } }}
+						{...field("minValue")}
+					/>
+					<TextField
+						label="Max value"
+						type="number"
+						size="small"
+						required
+						slotProps={{ htmlInput: { step: "any" } }}
+						{...field("maxValue")}
+					/>
+					<TextField label="Unit" size="small" required {...field("unit")} />
+					<TextField
+						label="Color"
+						type="color"
+						size="small"
+						sx={{ width: 90 }}
+						{...field("color")}
+					/>
+					<TextField label="Icon" size="small" required {...field("icon")} />
+					<Button type="submit" variant="contained">
+						{editedId === undefined ? "Add Series" : "Save"}
+					</Button>
+					{editedId !== undefined && (
+						<Button onClick={resetForm}>Cancel</Button>
+					)}
+				</Paper>
+			)}
 			{actionError && (
 				<Alert severity="error" sx={{ mb: 2 }}>
 					{actionError}
@@ -195,7 +202,9 @@ const SeriesTablePage = () => {
 			<Box sx={{ height: 500 }}>
 				<DataGrid
 					rows={data ?? []}
-					columns={columns}
+					columns={
+						canEdit ? columns : columns.filter((c) => c.field !== "actions")
+					}
 					// Only the first load shows the overlay; reloads keep the old rows.
 					loading={loading && !data}
 					disableRowSelectionOnClick

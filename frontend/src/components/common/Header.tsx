@@ -33,7 +33,7 @@ const Header = () => {
 		{ to: "/series", label: "Series" },
 		{ to: "/sensors", label: "Sensors" },
 		{ to: "/measurements", label: "Measurements" },
-		{ to: "/users", label: "Users" },
+		...(isAuthenticated ? [{ to: "/users", label: "Users" }] : []),
 	];
 
 	return (

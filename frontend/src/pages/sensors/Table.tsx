@@ -18,10 +18,13 @@ import {
 	type SensorRead,
 } from "@/client";
 import PageLayout from "../../components/common/PageLayout";
+import { isLoggedIn } from "../../utils/auth";
 import { errorMessage, useFetch } from "../../utils/useFetch";
 
 const SensorsTablePage = () => {
 	const [reloadKey, setReloadKey] = useState(0);
+	// Anonymous users can browse; only signed-in users can change data.
+	const canEdit = isLoggedIn();
 	const [name, setName] = useState("");
 	const [seriesId, setSeriesId] = useState("");
 	const [actionError, setActionError] = useState<string>();
@@ -86,37 +89,39 @@ const SensorsTablePage = () => {
 
 	return (
 		<PageLayout error={error}>
-			<Paper
-				component="form"
-				onSubmit={onCreate}
-				sx={{ p: 2, mb: 2, display: "flex", gap: 2, flexWrap: "wrap" }}
-			>
-				<TextField
-					label="Name"
-					size="small"
-					required
-					value={name}
-					onChange={(e) => setName(e.target.value)}
-				/>
-				<TextField
-					select
-					label="Series"
-					size="small"
-					required
-					sx={{ minWidth: 180 }}
-					value={seriesId}
-					onChange={(e) => setSeriesId(e.target.value)}
+			{canEdit && (
+				<Paper
+					component="form"
+					onSubmit={onCreate}
+					sx={{ p: 2, mb: 2, display: "flex", gap: 2, flexWrap: "wrap" }}
 				>
-					{(seriesList ?? []).map((series) => (
-						<MenuItem key={series.id} value={series.id}>
-							{series.name} ({series.unit})
-						</MenuItem>
-					))}
-				</TextField>
-				<Button type="submit" variant="contained">
-					Add Sensor
-				</Button>
-			</Paper>
+					<TextField
+						label="Name"
+						size="small"
+						required
+						value={name}
+						onChange={(e) => setName(e.target.value)}
+					/>
+					<TextField
+						select
+						label="Series"
+						size="small"
+						required
+						sx={{ minWidth: 180 }}
+						value={seriesId}
+						onChange={(e) => setSeriesId(e.target.value)}
+					>
+						{(seriesList ?? []).map((series) => (
+							<MenuItem key={series.id} value={series.id}>
+								{series.name} ({series.unit})
+							</MenuItem>
+						))}
+					</TextField>
+					<Button type="submit" variant="contained">
+						Add Sensor
+					</Button>
+				</Paper>
+			)}
 			{actionError && (
 				<Alert severity="error" sx={{ mb: 2 }}>
 					{actionError}
@@ -125,7 +130,9 @@ const SensorsTablePage = () => {
 			<Box sx={{ height: 500 }}>
 				<DataGrid
 					rows={data?.sensors ?? []}
-					columns={columns}
+					columns={
+						canEdit ? columns : columns.filter((c) => c.field !== "actions")
+					}
 					// Only the first load shows the overlay; reloads keep the old rows.
 					loading={loading && !data}
 					disableRowSelectionOnClick

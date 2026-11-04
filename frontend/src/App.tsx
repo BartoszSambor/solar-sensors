@@ -6,6 +6,7 @@ import SensorsTablePage from "./pages/sensors/Table";
 import SeriesTablePage from "./pages/series/Table";
 import UsersTablePage from "./pages/users/Table";
 import { darkTheme, lightTheme } from "./theme";
+import { isLoggedIn } from "./utils/auth";
 
 function App() {
 	const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
@@ -19,7 +20,12 @@ function App() {
 				<Route path="/series" element={<SeriesTablePage />} />
 				<Route path="/sensors" element={<SensorsTablePage />} />
 				<Route path="/measurements" element={<MeasurementsTablePage />} />
-				<Route path="/users" element={<UsersTablePage />} />
+				<Route
+					path="/users"
+					element={
+						isLoggedIn() ? <UsersTablePage /> : <Navigate to="/login" replace />
+					}
+				/>
 			</Routes>
 		</ThemeProvider>
 	);

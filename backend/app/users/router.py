@@ -3,11 +3,11 @@ from typing import Annotated
 
 from fastapi import APIRouter, Query
 
-from ..dependencies import DbSession
+from ..dependencies import DbSession, login_required
 from . import schemas as user_schemas
 from .service import user_service
 
-router = APIRouter()
+router = APIRouter(dependencies=[login_required])
 
 
 @router.get("/", response_model=user_schemas.UserListResponse)

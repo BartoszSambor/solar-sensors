@@ -9,6 +9,7 @@ import {
 	type MeasurementRead,
 } from "@/client";
 import PageLayout from "../../components/common/PageLayout";
+import { isLoggedIn } from "../../utils/auth";
 import { errorMessage, useFetch } from "../../utils/useFetch";
 import MeasurementsChart from "./Chart";
 
@@ -33,6 +34,8 @@ const MeasurementsTablePage = () => {
 	const [timestamp, setTimestamp] = useState("");
 	const [actionError, setActionError] = useState<string>();
 	const [reloadKey, setReloadKey] = useState(0);
+	// Anonymous users can browse; only signed-in users can change data.
+	const canEdit = isLoggedIn();
 	// Measurement clicked in the table, highlighted in the chart.
 	const [selected, setSelected] = useState<MeasurementRead>();
 
@@ -103,40 +106,42 @@ const MeasurementsTablePage = () => {
 
 	return (
 		<PageLayout error={error}>
-			<Paper
-				component="form"
-				onSubmit={onCreate}
-				sx={{ p: 2, mb: 2, display: "flex", gap: 2, flexWrap: "wrap" }}
-			>
-				<TextField
-					label="Sensor ID"
-					type="number"
-					size="small"
-					required
-					value={sensorId}
-					onChange={(e) => setSensorId(e.target.value)}
-				/>
-				<TextField
-					label="Value"
-					type="number"
-					size="small"
-					required
-					slotProps={{ htmlInput: { step: "any" } }}
-					value={value}
-					onChange={(e) => setValue(e.target.value)}
-				/>
-				<TextField
-					label="Timestamp (default: now)"
-					type="datetime-local"
-					size="small"
-					slotProps={{ inputLabel: { shrink: true } }}
-					value={timestamp}
-					onChange={(e) => setTimestamp(e.target.value)}
-				/>
-				<Button type="submit" variant="contained">
-					Add Measurement
-				</Button>
-			</Paper>
+			{canEdit && (
+				<Paper
+					component="form"
+					onSubmit={onCreate}
+					sx={{ p: 2, mb: 2, display: "flex", gap: 2, flexWrap: "wrap" }}
+				>
+					<TextField
+						label="Sensor ID"
+						type="number"
+						size="small"
+						required
+						value={sensorId}
+						onChange={(e) => setSensorId(e.target.value)}
+					/>
+					<TextField
+						label="Value"
+						type="number"
+						size="small"
+						required
+						slotProps={{ htmlInput: { step: "any" } }}
+						value={value}
+						onChange={(e) => setValue(e.target.value)}
+					/>
+					<TextField
+						label="Timestamp (default: now)"
+						type="datetime-local"
+						size="small"
+						slotProps={{ inputLabel: { shrink: true } }}
+						value={timestamp}
+						onChange={(e) => setTimestamp(e.target.value)}
+					/>
+					<Button type="submit" variant="contained">
+						Add Measurement
+					</Button>
+				</Paper>
+			)}
 			{actionError && (
 				<Alert severity="error" sx={{ mb: 2 }}>
 					{actionError}
