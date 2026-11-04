@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { ChangePasswordData, ChangePasswordErrors, ChangePasswordResponses, CreateSensorData, CreateSensorErrors, CreateSensorResponses, DeleteSensorData, DeleteSensorErrors, DeleteSensorResponses, GetHealthData, GetHealthResponses, GetSensorData, GetSensorErrors, GetSensorResponses, ListSensorsData, ListSensorsResponses, ListUsersData, ListUsersErrors, ListUsersResponses, LoginData, LoginErrors, LoginResponses, LogoutData, LogoutResponses } from './types.gen';
+import type { ChangePasswordData, ChangePasswordErrors, ChangePasswordResponses, CreateMeasurementData, CreateMeasurementErrors, CreateMeasurementResponses, CreateSensorData, CreateSensorErrors, CreateSensorResponses, DeleteSensorData, DeleteSensorErrors, DeleteSensorResponses, GetHealthData, GetHealthResponses, GetMeasurementData, GetMeasurementErrors, GetMeasurementResponses, GetSensorData, GetSensorErrors, GetSensorResponses, ListMeasurementsData, ListMeasurementsErrors, ListMeasurementsResponses, ListSensorsData, ListSensorsResponses, ListUsersData, ListUsersErrors, ListUsersResponses, LoginData, LoginErrors, LoginResponses, LogoutData, LogoutResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -95,6 +95,37 @@ export const deleteSensor = <ThrowOnError extends boolean = true>(options: Optio
 export const getSensor = <ThrowOnError extends boolean = true>(options: Options<GetSensorData, ThrowOnError>): RequestResult<GetSensorResponses, GetSensorErrors, ThrowOnError> => (options.client ?? client).get<GetSensorResponses, GetSensorErrors, ThrowOnError>({
     responseType: 'json',
     url: '/api/v1/sensors/{sensor_id}',
+    ...options
+});
+
+/**
+ * List Measurements
+ */
+export const listMeasurements = <ThrowOnError extends boolean = true>(options?: Options<ListMeasurementsData, ThrowOnError>): RequestResult<ListMeasurementsResponses, ListMeasurementsErrors, ThrowOnError> => (options?.client ?? client).get<ListMeasurementsResponses, ListMeasurementsErrors, ThrowOnError>({
+    responseType: 'json',
+    url: '/api/measurements',
+    ...options
+});
+
+/**
+ * Create Measurement
+ */
+export const createMeasurement = <ThrowOnError extends boolean = true>(options: Options<CreateMeasurementData, ThrowOnError>): RequestResult<CreateMeasurementResponses, CreateMeasurementErrors, ThrowOnError> => (options.client ?? client).post<CreateMeasurementResponses, CreateMeasurementErrors, ThrowOnError>({
+    responseType: 'json',
+    url: '/api/measurements',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Get Measurement
+ */
+export const getMeasurement = <ThrowOnError extends boolean = true>(options: Options<GetMeasurementData, ThrowOnError>): RequestResult<GetMeasurementResponses, GetMeasurementErrors, ThrowOnError> => (options.client ?? client).get<GetMeasurementResponses, GetMeasurementErrors, ThrowOnError>({
+    responseType: 'json',
+    url: '/api/measurements/{measurement_id}',
     ...options
 });
 

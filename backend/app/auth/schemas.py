@@ -1,13 +1,8 @@
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
-from pydantic.alias_generators import to_camel
+from pydantic import Field
 
-
-class CamelModel(BaseModel):
-    """Serialized with camelCase keys; accepts snake_case too."""
-
-    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
+from ..schemas import CamelModel
 
 
 class LoginRequest(CamelModel):

@@ -11,6 +11,7 @@ from app.config import settings
 from app.database.core import get_db
 from app.main import app
 from app.models import Base
+from app.series.models import Series
 from app.users.models import User
 from app.users.schemas import UserCreate
 from app.users.service import user_service
@@ -104,3 +105,18 @@ def other_user_token_headers(client: TestClient, other_user: User):
     a_token = tokens["accessToken"]
     headers = {"Authorization": f"Bearer {a_token}"}
     return headers
+
+
+@pytest.fixture
+def series(db_session: Session) -> Series:
+    series = Series(
+        name="Temperature",
+        min_value=-40,
+        max_value=85,
+        color="#d62728",
+        icon="thermostat",
+        unit="°C",
+    )
+    db_session.add(series)
+    db_session.commit()
+    return series

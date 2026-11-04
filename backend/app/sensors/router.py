@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
 
 from ..dependencies import DbSession
+from ..series.models import Series
 from . import schemas
 from .models import Sensor
 from .service import sensor_service
@@ -26,6 +27,11 @@ def list_sensors(db: DbSession) -> schemas.SensorsList:
     "/", response_model=schemas.SensorRead, status_code=status.HTTP_201_CREATED
 )
 def create_sensor(sensor_in: schemas.SensorCreate, db: DbSession) -> Sensor:
+    if not db.get(Series, sensor_in.series_id):
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail="Series not found",
+        )
     return sensor_service.create_sensor(db, sensor_in)
 
 

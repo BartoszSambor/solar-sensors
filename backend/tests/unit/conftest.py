@@ -7,6 +7,7 @@ from sqlalchemy.pool import StaticPool
 from app.database.core import get_db
 from app.main import app
 from app.models import Base
+from app.series.models import Series
 
 
 @pytest.fixture(name="db_session")
@@ -37,3 +38,18 @@ def db_session_fixture():
 @pytest.fixture(name="client")
 def client_fixture(db_session: Session):
     return TestClient(app)
+
+
+@pytest.fixture
+def series(db_session: Session) -> Series:
+    series = Series(
+        name="Temperature",
+        min_value=-40,
+        max_value=85,
+        color="#d62728",
+        icon="thermostat",
+        unit="°C",
+    )
+    db_session.add(series)
+    db_session.commit()
+    return series

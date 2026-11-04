@@ -31,6 +31,7 @@ const Header = () => {
 
 	const sections = [
 		{ to: "/sensors", label: "Sensors" },
+		{ to: "/measurements", label: "Measurements" },
 		{ to: "/users", label: "Users" },
 	];
 

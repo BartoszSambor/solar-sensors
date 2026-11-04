@@ -49,6 +49,46 @@ export type LoginResponse = {
 };
 
 /**
+ * MeasurementCreate
+ */
+export type MeasurementCreate = {
+    /**
+     * Value
+     */
+    value: number;
+    /**
+     * Timestamp
+     */
+    timestamp: string;
+};
+
+/**
+ * MeasurementRead
+ */
+export type MeasurementRead = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Seriesid
+     */
+    seriesId: number;
+    /**
+     * Sensorid
+     */
+    sensorId: number | null;
+    /**
+     * Value
+     */
+    value: number;
+    /**
+     * Timestamp
+     */
+    timestamp: string;
+};
+
+/**
  * PasswordChangeRequest
  */
 export type PasswordChangeRequest = {
@@ -73,7 +113,7 @@ export type SensorCreate = {
     /**
      * Seriesid
      */
-    seriesId: string;
+    seriesId: number;
 };
 
 /**
@@ -81,17 +121,17 @@ export type SensorCreate = {
  */
 export type SensorRead = {
     /**
-     * Id
-     */
-    id: number;
-    /**
      * Name
      */
     name: string;
     /**
      * Seriesid
      */
-    seriesId: string;
+    seriesId: number;
+    /**
+     * Id
+     */
+    id: number;
 };
 
 /**
@@ -396,6 +436,116 @@ export type GetSensorResponses = {
 };
 
 export type GetSensorResponse = GetSensorResponses[keyof GetSensorResponses];
+
+export type ListMeasurementsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Series
+         *
+         * Series ids, e.g. 10,12,23
+         */
+        series?: string | null;
+        /**
+         * From
+         */
+        from?: string | null;
+        /**
+         * To
+         */
+        to?: string | null;
+        /**
+         * Sort
+         */
+        sort?: 'timestamp' | '-timestamp';
+        /**
+         * Limit
+         */
+        limit?: number;
+    };
+    url: '/api/measurements';
+};
+
+export type ListMeasurementsErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListMeasurementsError = ListMeasurementsErrors[keyof ListMeasurementsErrors];
+
+export type ListMeasurementsResponses = {
+    /**
+     * Response List Measurements
+     *
+     * Successful Response
+     */
+    200: Array<MeasurementRead>;
+};
+
+export type ListMeasurementsResponse = ListMeasurementsResponses[keyof ListMeasurementsResponses];
+
+export type CreateMeasurementData = {
+    body: MeasurementCreate;
+    path?: never;
+    query: {
+        /**
+         * Sensorid
+         */
+        sensorId: number;
+    };
+    url: '/api/measurements';
+};
+
+export type CreateMeasurementErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateMeasurementError = CreateMeasurementErrors[keyof CreateMeasurementErrors];
+
+export type CreateMeasurementResponses = {
+    /**
+     * Successful Response
+     */
+    201: MeasurementRead;
+};
+
+export type CreateMeasurementResponse = CreateMeasurementResponses[keyof CreateMeasurementResponses];
+
+export type GetMeasurementData = {
+    body?: never;
+    path: {
+        /**
+         * Measurement Id
+         */
+        measurement_id: number;
+    };
+    query?: never;
+    url: '/api/measurements/{measurement_id}';
+};
+
+export type GetMeasurementErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetMeasurementError = GetMeasurementErrors[keyof GetMeasurementErrors];
+
+export type GetMeasurementResponses = {
+    /**
+     * Successful Response
+     */
+    200: MeasurementRead;
+};
+
+export type GetMeasurementResponse = GetMeasurementResponses[keyof GetMeasurementResponses];
 
 export type GetHealthData = {
     body?: never;

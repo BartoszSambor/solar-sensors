@@ -18,7 +18,7 @@ class SensorService:
         )
 
     def create_sensor(self, db: Session, sensor_in: SensorCreate) -> Sensor:
-        sensor = Sensor(name=sensor_in.name, series=sensor_in.seriesId)
+        sensor = Sensor(name=sensor_in.name, series_id=sensor_in.series_id)
         db.add(sensor)
         db.commit()
         db.refresh(sensor)

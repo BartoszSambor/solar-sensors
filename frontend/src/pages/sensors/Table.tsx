@@ -33,7 +33,7 @@ const SensorsTablePage = () => {
 		e.preventDefault();
 		setActionError(undefined);
 		try {
-			await createSensor({ body: { name, seriesId } });
+			await createSensor({ body: { name, seriesId: Number(seriesId) } });
 			setName("");
 			setSeriesId("");
 			reload();
@@ -88,7 +88,8 @@ const SensorsTablePage = () => {
 					onChange={(e) => setName(e.target.value)}
 				/>
 				<TextField
-					label="Series"
+					label="Series ID"
+					type="number"
 					size="small"
 					required
 					value={seriesId}
