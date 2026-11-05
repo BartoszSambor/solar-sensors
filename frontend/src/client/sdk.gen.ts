@@ -23,6 +23,7 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
  */
 export const listUsers = <ThrowOnError extends boolean = true>(options?: Options<ListUsersData, ThrowOnError>): RequestResult<ListUsersResponses, ListUsersErrors, ThrowOnError> => (options?.client ?? client).get<ListUsersResponses, ListUsersErrors, ThrowOnError>({
     responseType: 'json',
+    security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/users/',
     ...options
 });
@@ -76,6 +77,7 @@ export const listSensors = <ThrowOnError extends boolean = true>(options?: Optio
  */
 export const createSensor = <ThrowOnError extends boolean = true>(options: Options<CreateSensorData, ThrowOnError>): RequestResult<CreateSensorResponses, CreateSensorErrors, ThrowOnError> => (options.client ?? client).post<CreateSensorResponses, CreateSensorErrors, ThrowOnError>({
     responseType: 'json',
+    security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/v1/sensors/',
     ...options,
     headers: {
@@ -87,7 +89,11 @@ export const createSensor = <ThrowOnError extends boolean = true>(options: Optio
 /**
  * Delete Sensor
  */
-export const deleteSensor = <ThrowOnError extends boolean = true>(options: Options<DeleteSensorData, ThrowOnError>): RequestResult<DeleteSensorResponses, DeleteSensorErrors, ThrowOnError> => (options.client ?? client).delete<DeleteSensorResponses, DeleteSensorErrors, ThrowOnError>({ url: '/api/v1/sensors/{sensor_id}', ...options });
+export const deleteSensor = <ThrowOnError extends boolean = true>(options: Options<DeleteSensorData, ThrowOnError>): RequestResult<DeleteSensorResponses, DeleteSensorErrors, ThrowOnError> => (options.client ?? client).delete<DeleteSensorResponses, DeleteSensorErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/v1/sensors/{sensor_id}',
+    ...options
+});
 
 /**
  * Get Sensor
@@ -109,9 +115,12 @@ export const listMeasurements = <ThrowOnError extends boolean = true>(options?: 
 
 /**
  * Create Measurement
+ *
+ * Called by the sensor itself; the X-API-Key header identifies it.
  */
 export const createMeasurement = <ThrowOnError extends boolean = true>(options: Options<CreateMeasurementData, ThrowOnError>): RequestResult<CreateMeasurementResponses, CreateMeasurementErrors, ThrowOnError> => (options.client ?? client).post<CreateMeasurementResponses, CreateMeasurementErrors, ThrowOnError>({
     responseType: 'json',
+    security: [{ name: 'X-API-Key', type: 'apiKey' }],
     url: '/api/measurements',
     ...options,
     headers: {
@@ -143,6 +152,7 @@ export const listSeries = <ThrowOnError extends boolean = true>(options?: Option
  */
 export const createSeries = <ThrowOnError extends boolean = true>(options: Options<CreateSeriesData, ThrowOnError>): RequestResult<CreateSeriesResponses, CreateSeriesErrors, ThrowOnError> => (options.client ?? client).post<CreateSeriesResponses, CreateSeriesErrors, ThrowOnError>({
     responseType: 'json',
+    security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/series',
     ...options,
     headers: {
@@ -156,7 +166,11 @@ export const createSeries = <ThrowOnError extends boolean = true>(options: Optio
  *
  * Deletes the series together with all its sensors and measurements.
  */
-export const deleteSeries = <ThrowOnError extends boolean = true>(options: Options<DeleteSeriesData, ThrowOnError>): RequestResult<DeleteSeriesResponses, DeleteSeriesErrors, ThrowOnError> => (options.client ?? client).delete<DeleteSeriesResponses, DeleteSeriesErrors, ThrowOnError>({ url: '/api/series/{series_id}', ...options });
+export const deleteSeries = <ThrowOnError extends boolean = true>(options: Options<DeleteSeriesData, ThrowOnError>): RequestResult<DeleteSeriesResponses, DeleteSeriesErrors, ThrowOnError> => (options.client ?? client).delete<DeleteSeriesResponses, DeleteSeriesErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/series/{series_id}',
+    ...options
+});
 
 /**
  * Get Series
@@ -172,6 +186,7 @@ export const getSeries = <ThrowOnError extends boolean = true>(options: Options<
  */
 export const updateSeries = <ThrowOnError extends boolean = true>(options: Options<UpdateSeriesData, ThrowOnError>): RequestResult<UpdateSeriesResponses, UpdateSeriesErrors, ThrowOnError> => (options.client ?? client).put<UpdateSeriesResponses, UpdateSeriesErrors, ThrowOnError>({
     responseType: 'json',
+    security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/series/{series_id}',
     ...options,
     headers: {

@@ -25,17 +25,22 @@ def list_sensors(db: DbSession) -> schemas.SensorsList:
 
 @router.post(
     "/",
-    response_model=schemas.SensorRead,
+    response_model=schemas.SensorCreated,
     status_code=status.HTTP_201_CREATED,
     dependencies=[login_required],
 )
-def create_sensor(sensor_in: schemas.SensorCreate, db: DbSession) -> Sensor:
+def create_sensor(
+    sensor_in: schemas.SensorCreate, db: DbSession
+) -> schemas.SensorCreated:
     if not db.get(Series, sensor_in.series_id):
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail="Series not found",
         )
-    return sensor_service.create_sensor(db, sensor_in)
+    sensor, api_key = sensor_service.create_sensor(db, sensor_in)
+    return schemas.SensorCreated(
+        **schemas.SensorRead.model_validate(sensor).model_dump(), api_key=api_key
+    )
 
 
 @router.get("/{sensor_id}", response_model=schemas.SensorRead)

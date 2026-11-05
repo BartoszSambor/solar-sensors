@@ -5,7 +5,11 @@ import App from "./App";
 import { client } from "./client/client.gen";
 import { clearAuthData, getAccessToken, isLoggedIn } from "./utils/auth";
 
-client.setConfig({ auth: () => getAccessToken() });
+// The session token is only for Bearer endpoints; sensor API keys
+// (X-API-Key) are passed explicitly per request.
+client.setConfig({
+	auth: (auth) => (auth.scheme === "bearer" ? getAccessToken() : undefined),
+});
 
 // A 401 while signed in means the token expired or was revoked: sign in again.
 client.instance.interceptors.response.use(undefined, (error) => {

@@ -29,7 +29,8 @@ const MeasurementsTablePage = () => {
 	const [query, setQuery] = useState<Query>({ sort, limit });
 
 	// New measurement form state.
-	const [sensorId, setSensorId] = useState("");
+	// Kept in memory only; a real sensor stores its own key.
+	const [apiKey, setApiKey] = useState("");
 	const [value, setValue] = useState("");
 	const [timestamp, setTimestamp] = useState("");
 	const [actionError, setActionError] = useState<string>();
@@ -91,7 +92,7 @@ const MeasurementsTablePage = () => {
 		setActionError(undefined);
 		try {
 			await createMeasurement({
-				query: { sensorId: Number(sensorId) },
+				headers: { "X-API-Key": apiKey },
 				body: {
 					value: Number(value),
 					timestamp: toIso(timestamp) ?? new Date().toISOString(),
@@ -113,12 +114,13 @@ const MeasurementsTablePage = () => {
 					sx={{ p: 2, mb: 2, display: "flex", gap: 2, flexWrap: "wrap" }}
 				>
 					<TextField
-						label="Sensor ID"
-						type="number"
+						label="Sensor API key"
+						type="password"
 						size="small"
 						required
-						value={sensorId}
-						onChange={(e) => setSensorId(e.target.value)}
+						autoComplete="off"
+						value={apiKey}
+						onChange={(e) => setApiKey(e.target.value)}
 					/>
 					<TextField
 						label="Value"

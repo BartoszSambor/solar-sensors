@@ -29,10 +29,10 @@ class AuthService:
                 AuthSession.user_id == user.id, AuthSession.expires_at <= now
             )
         )
-        token = security.generate_session_token()
+        token = security.generate_token()
         db.add(
             AuthSession(
-                token_hash=security.hash_session_token(token),
+                token_hash=security.hash_token(token),
                 user_id=user.id,
                 expires_at=now + security.SESSION_LIFETIME,
             )
@@ -44,7 +44,7 @@ class AuthService:
         """Return the session for a token, unless it is unknown or expired."""
         return db.scalar(
             select(AuthSession).where(
-                AuthSession.token_hash == security.hash_session_token(token),
+                AuthSession.token_hash == security.hash_token(token),
                 AuthSession.expires_at > _utcnow(),
             )
         )

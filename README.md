@@ -26,6 +26,17 @@ docker compose exec backend python -m app.manage delete-user <username>
 
 `create-user` prompts for the password. For scripts, pipe it in with `--password-stdin` (and `exec -T`).
 
+## Sensors
+
+Each sensor (IoT device) authenticates with its own API key. The key is returned only once, in the response to `POST /api/v1/sensors/` (the UI shows it in a dialog).
+
+The device sends measurements with the key:
+```bash
+curl -X POST http://localhost/api/measurements \
+  -H "X-API-Key: <key>" -H "Content-Type: application/json" \
+  -d '{"value": 21.5, "timestamp": "2026-11-05T12:00:00Z"}'
+```
+
 ## Structure
 
 ```

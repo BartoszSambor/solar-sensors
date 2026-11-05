@@ -1,16 +1,26 @@
 from fastapi.testclient import TestClient
+from sqlalchemy.orm import Session
 
+from app.auth.security import hash_token
+from app.sensors.models import Sensor
 from app.series.models import Series
 
 
-def test_sensor_crud(admin_client: TestClient, series: Series):
+def test_sensor_crud(admin_client: TestClient, db_session: Session, series: Series):
     response = admin_client.post(
         "/api/v1/sensors/", json={"name": "PV-01", "seriesId": series.id}
     )
     assert response.status_code == 201
-    sensor = response.json()
+    created = response.json()
+    api_key = created.pop("apiKey")
+    sensor = created
     assert sensor["name"] == "PV-01"
     assert sensor["seriesId"] == series.id
+
+    # Only the hash is stored, and the key is never returned again.
+    stored = db_session.get(Sensor, sensor["id"])
+    assert stored is not None
+    assert stored.api_key_hash == hash_token(api_key)
 
     response = admin_client.get("/api/v1/sensors/")
     assert response.json()["sensors"] == [sensor]
@@ -33,3 +43,13 @@ def test_sensor_with_unknown_series_rejected(admin_client: TestClient):
 def test_missing_sensor_returns_404(admin_client: TestClient):
     assert admin_client.get("/api/v1/sensors/999").status_code == 404
     assert admin_client.delete("/api/v1/sensors/999").status_code == 404
+
+
+def test_each_sensor_gets_its_own_key(admin_client: TestClient, series: Series):
+    keys = {
+        admin_client.post(
+            "/api/v1/sensors/", json={"name": name, "seriesId": series.id}
+        ).json()["apiKey"]
+        for name in ("A", "B")
+    }
+    assert len(keys) == 2

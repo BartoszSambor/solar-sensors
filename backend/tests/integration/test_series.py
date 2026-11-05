@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app.measurements.models import Measurement
 from app.sensors.models import Sensor
 from app.series.models import Series
+from tests.helpers import create_sensor, post_measurement
 
 URL = "/api/series"
 PAYLOAD = {
@@ -58,14 +59,8 @@ def test_missing_series_returns_404(admin_client: TestClient):
 def test_delete_series_removes_sensors_and_measurements(
     admin_client: TestClient, db_session: Session, series: Series
 ):
-    sensor = Sensor(name="T-01", series_id=series.id)
-    db_session.add(sensor)
-    db_session.commit()
-    response = admin_client.post(
-        "/api/measurements",
-        params={"sensorId": sensor.id},
-        json={"value": 20, "timestamp": "2026-11-04T12:00:00Z"},
-    )
+    _, api_key = create_sensor(db_session, series.id)
+    response = post_measurement(admin_client, api_key, 20, "2026-11-04T12:00:00Z")
     assert response.status_code == 201
 
     assert admin_client.delete(f"{URL}/{series.id}").status_code == 204
@@ -77,13 +72,9 @@ def test_delete_series_removes_sensors_and_measurements(
 def test_delete_sensor_keeps_measurements(
     admin_client: TestClient, db_session: Session, series: Series
 ):
-    sensor = Sensor(name="T-01", series_id=series.id)
-    db_session.add(sensor)
-    db_session.commit()
-    measurement = admin_client.post(
-        "/api/measurements",
-        params={"sensorId": sensor.id},
-        json={"value": 20, "timestamp": "2026-11-04T12:00:00Z"},
+    sensor, api_key = create_sensor(db_session, series.id)
+    measurement = post_measurement(
+        admin_client, api_key, 20, "2026-11-04T12:00:00Z"
     ).json()
 
     assert admin_client.delete(f"/api/v1/sensors/{sensor.id}").status_code == 204

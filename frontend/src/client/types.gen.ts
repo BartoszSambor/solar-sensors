@@ -117,6 +117,30 @@ export type SensorCreate = {
 };
 
 /**
+ * SensorCreated
+ */
+export type SensorCreated = {
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Seriesid
+     */
+    seriesId: number;
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Apikey
+     *
+     * Secret for the X-API-Key header. Returned only once.
+     */
+    apiKey: string;
+};
+
+/**
  * SensorRead
  */
 export type SensorRead = {
@@ -436,7 +460,7 @@ export type CreateSensorResponses = {
     /**
      * Successful Response
      */
-    201: SensorRead;
+    201: SensorCreated;
 };
 
 export type CreateSensorResponse = CreateSensorResponses[keyof CreateSensorResponses];
@@ -554,12 +578,7 @@ export type ListMeasurementsResponse = ListMeasurementsResponses[keyof ListMeasu
 export type CreateMeasurementData = {
     body: MeasurementCreate;
     path?: never;
-    query: {
-        /**
-         * Sensorid
-         */
-        sensorId: number;
-    };
+    query?: never;
     url: '/api/measurements';
 };
 

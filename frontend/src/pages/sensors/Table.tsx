@@ -15,11 +15,13 @@ import {
 	deleteSensor,
 	listSensors,
 	listSeries,
+	type SensorCreated,
 	type SensorRead,
 } from "@/client";
 import PageLayout from "../../components/common/PageLayout";
 import { isLoggedIn } from "../../utils/auth";
 import { errorMessage, useFetch } from "../../utils/useFetch";
+import ApiKeyDialog from "./ApiKeyDialog";
 
 const SensorsTablePage = () => {
 	const [reloadKey, setReloadKey] = useState(0);
@@ -28,6 +30,7 @@ const SensorsTablePage = () => {
 	const [name, setName] = useState("");
 	const [seriesId, setSeriesId] = useState("");
 	const [actionError, setActionError] = useState<string>();
+	const [created, setCreated] = useState<SensorCreated>();
 	const { data, loading, error } = useFetch(
 		async () => (await listSensors()).data,
 		reloadKey,
@@ -41,7 +44,10 @@ const SensorsTablePage = () => {
 		e.preventDefault();
 		setActionError(undefined);
 		try {
-			await createSensor({ body: { name, seriesId: Number(seriesId) } });
+			const { data } = await createSensor({
+				body: { name, seriesId: Number(seriesId) },
+			});
+			setCreated(data);
 			setName("");
 			setSeriesId("");
 			reload();
@@ -138,6 +144,7 @@ const SensorsTablePage = () => {
 					disableRowSelectionOnClick
 				/>
 			</Box>
+			<ApiKeyDialog sensor={created} onClose={() => setCreated(undefined)} />
 		</PageLayout>
 	);
 };

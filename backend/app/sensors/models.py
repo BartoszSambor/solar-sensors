@@ -13,3 +13,5 @@ class Sensor(Base, TimeStampMixin):
     series_id: Mapped[int] = mapped_column(
         ForeignKey("series.id", ondelete="CASCADE"), index=True
     )
+    # The API key is shown once on creation; only its hash is stored.
+    api_key_hash: Mapped[str] = mapped_column(String(64), unique=True)

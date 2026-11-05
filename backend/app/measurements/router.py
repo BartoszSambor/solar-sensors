@@ -3,8 +3,7 @@ from typing import Annotated, Literal
 
 from fastapi import APIRouter, HTTPException, Query, status
 
-from ..dependencies import DbSession, login_required
-from ..sensors.models import Sensor
+from ..dependencies import CurrentSensor, DbSession
 from ..series.models import Series
 from .models import Measurement
 from .schemas import MeasurementCreate, MeasurementRead
@@ -33,22 +32,11 @@ def list_measurements(
     )
 
 
-@router.post(
-    "",
-    response_model=MeasurementRead,
-    status_code=status.HTTP_201_CREATED,
-    dependencies=[login_required],
-)
+@router.post("", response_model=MeasurementRead, status_code=status.HTTP_201_CREATED)
 def create_measurement(
-    measurement_in: MeasurementCreate,
-    db: DbSession,
-    sensor_id: Annotated[int, Query(alias="sensorId")],
+    measurement_in: MeasurementCreate, db: DbSession, sensor: CurrentSensor
 ) -> Measurement:
-    sensor = db.get(Sensor, sensor_id)
-    if not sensor:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Sensor not found"
-        )
+    """Called by the sensor itself; the X-API-Key header identifies it."""
     series = db.get(Series, sensor.series_id)
     assert series is not None  # guaranteed by the foreign key
     if not series.min_value <= measurement_in.value <= series.max_value:

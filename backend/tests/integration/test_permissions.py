@@ -1,4 +1,8 @@
-"""Anonymous users can read data; writes and the users list need a bearer token."""
+"""Anonymous users can read data; writes and the users list need a bearer token.
+
+Adding measurements is the exception: it needs a sensor's X-API-Key instead
+(see test_measurements.py).
+"""
 
 import pytest
 from fastapi.testclient import TestClient
@@ -18,7 +22,6 @@ LOGIN_REQUIRED = [
     ("DELETE", "/api/series/1"),
     ("POST", "/api/v1/sensors/"),
     ("DELETE", "/api/v1/sensors/1"),
-    ("POST", "/api/measurements?sensorId=1"),
 ]
 
 

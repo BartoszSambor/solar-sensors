@@ -5,7 +5,7 @@ from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
 from app.auth.models import AuthSession
-from app.auth.security import hash_session_token
+from app.auth.security import hash_token
 from app.config import settings
 from app.models import _utcnow
 from app.users.models import User
@@ -101,7 +101,7 @@ def test_only_token_hash_is_stored(
     response = client.post(f"{settings.AUTH_STR}/login", json=LOGIN)
     token = response.json()["accessToken"]
     hashes = db_session.scalars(select(AuthSession.token_hash)).all()
-    assert hashes == [hash_session_token(token)]
+    assert hashes == [hash_token(token)]
     assert token not in hashes
 
 
