@@ -33,11 +33,26 @@ services:
   frontend:
     build: ./frontend
     restart: always
-    ports:
-      - 80:80
-      - 443:443
     depends_on:
       - backend
 
+  caddy:
+    image: caddy:2.10-alpine
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+      - 443:443/udp
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-localhost}
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - frontend
+
 volumes:
   postgres_data:
+  caddy_data:
+  caddy_config:

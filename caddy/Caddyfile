@@ -1,0 +1,16 @@
+# Public entry point: TLS termination in front of the frontend nginx.
+# SITE_ADDRESS=localhost -> certificate from Caddy's local CA (browser warns until trusted).
+# SITE_ADDRESS=<domain>  -> Let's Encrypt certificate, obtained and renewed automatically.
+# Plain HTTP is redirected to HTTPS.
+{$SITE_ADDRESS:localhost} {
+	encode zstd gzip
+
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+
+	reverse_proxy frontend:80
+}

@@ -20,7 +20,7 @@
 		"build": "vite build",
 		"lint": "biome check --write --unsafe --no-errors-on-unmatched --files-ignore-unknown=true ./",
 		"preview": "vite preview",
-		"generate-client": "openapi-ts"
+		"generate-client": "NODE_TLS_REJECT_UNAUTHORIZED=0 openapi-ts"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.6.4",

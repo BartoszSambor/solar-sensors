@@ -1,6 +1,6 @@
 # Solar Sensors
 
-Full-stack app: FastAPI + PostgreSQL backend, React + MUI frontend served by nginx.
+Full-stack app: FastAPI + PostgreSQL backend, React + MUI frontend served by nginx, behind Caddy (HTTPS).
 
 ## Run
 
@@ -9,11 +9,19 @@ cp .env.example .env
 docker compose up -d --build
 ```
 
-- App: http://localhost
-- API docs: http://localhost/api/v1/docs
+- App: https://localhost (http redirects to https)
+- API docs: https://localhost/api/v1/docs
 - Login: `FIRST_SUPERUSER_USERNAME` / `FIRST_SUPERUSER_PASSWORD` from `.env`
 
 On start the backend applies migrations and creates the first user from `.env`.
+
+## HTTPS
+
+Caddy (`caddy/Caddyfile`) is the public entry point.
+
+- `SITE_ADDRESS=<domain>`: Caddy gets and renews a Let's Encrypt certificate automatically. The domain must point at the server and ports 80 and 443 must be open.
+
+Certificates live in the `caddy_data` volume.
 
 ## User accounts
 
@@ -32,7 +40,7 @@ Each sensor (IoT device) authenticates with its own API key. The key is returned
 
 The device sends measurements with the key:
 ```bash
-curl -X POST http://localhost/api/measurements \
+curl -X POST https://localhost/api/measurements \
   -H "X-API-Key: <key>" -H "Content-Type: application/json" \
   -d '{"value": 21.5, "timestamp": "2026-11-05T12:00:00Z"}'
 ```
@@ -43,6 +51,7 @@ curl -X POST http://localhost/api/measurements \
 backend/    FastAPI app (app/), Alembic migrations (alembic/), tests (tests/)
             dev scripts (scripts/)
 docs/       database.mmd - Mermaid ER diagram, regenerated from the models by pre-commit
+caddy/      Caddyfile - HTTPS reverse proxy
 frontend/   React app (src/), generated API client (src/client/), nginx config
 ```
 
@@ -67,7 +76,7 @@ cd frontend
 npm install
 npm run dev              # dev server
 npm run lint             # biome
-npm run generate-client  # regenerate src/client from the running API (http://localhost)
+npm run generate-client  # regenerate src/client from the running API (https://localhost)
 ```
 
 ## Code quality
