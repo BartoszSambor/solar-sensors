@@ -200,6 +200,6 @@ export const updateSeries = <ThrowOnError extends boolean = true>(options: Optio
  */
 export const getHealth = <ThrowOnError extends boolean = true>(options?: Options<GetHealthData, ThrowOnError>): RequestResult<GetHealthResponses, unknown, ThrowOnError> => (options?.client ?? client).get<GetHealthResponses, unknown, ThrowOnError>({
     responseType: 'json',
-    url: '/health',
+    url: '/api/health',
     ...options
 });

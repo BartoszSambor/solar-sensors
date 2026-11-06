@@ -45,6 +45,12 @@ curl -X POST https://localhost/api/measurements \
   -d '{"value": 21.5, "timestamp": "2026-11-05T12:00:00Z"}'
 ```
 
+## Simulator
+
+`simulator/` is a small service that acts as IoT sensors: it sends generated measurements to the app's HTTPS address with a sensor's API key. It runs in the same compose stack; nginx routes `/simulator/` to it, and the Simulator page (signed-in users) controls it.
+
+Allowed target addresses come from `SIMULATOR_API_URLS` in `.env`. Locally that is `https://host.docker.internal` (the app as seen from a container).
+
 ## Structure
 
 ```
@@ -52,6 +58,7 @@ backend/    FastAPI app (app/), Alembic migrations (alembic/), tests (tests/)
             dev scripts (scripts/)
 docs/       database.mmd - Mermaid ER diagram, regenerated from the models by pre-commit
 caddy/      Caddyfile - HTTPS reverse proxy
+simulator/  IoT sensor simulator (FastAPI), routed at /simulator/
 frontend/   React app (src/), generated API client (src/client/), nginx config
 ```
 

@@ -24,7 +24,14 @@ The app runs at **https://solar-sensors.duckdns.org**.
 ```bash
 # Images
 docker compose build
-docker save solar-sensors-backend solar-sensors-frontend | gzip | ssh root@2.29.172.94 'gunzip | docker load'
+docker save solar-sensors-backend solar-sensors-frontend solar-sensors-simulator | gzip | ssh root@2.29.172.94 'gunzip | docker load'
+```
+
+Simulator settings in the server's `.env`:
+
+```
+SIMULATOR_API_URLS=https://solar-sensors.duckdns.org
+SIMULATOR_TLS_VERIFY=true
 ```
 
 Start:

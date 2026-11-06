@@ -4,6 +4,7 @@ import LoginPage from "./pages/auth/login";
 import MeasurementsTablePage from "./pages/measurements/Table";
 import SensorsTablePage from "./pages/sensors/Table";
 import SeriesTablePage from "./pages/series/Table";
+import SimulatorPage from "./pages/simulator/Simulator";
 import UsersTablePage from "./pages/users/Table";
 import { darkTheme, lightTheme } from "./theme";
 import { isLoggedIn } from "./utils/auth";
@@ -20,6 +21,12 @@ function App() {
 				<Route path="/series" element={<SeriesTablePage />} />
 				<Route path="/sensors" element={<SensorsTablePage />} />
 				<Route path="/measurements" element={<MeasurementsTablePage />} />
+				<Route
+					path="/simulator"
+					element={
+						isLoggedIn() ? <SimulatorPage /> : <Navigate to="/login" replace />
+					}
+				/>
 				<Route
 					path="/users"
 					element={

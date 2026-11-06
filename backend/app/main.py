@@ -1,6 +1,9 @@
+from typing import Literal
+
 import uvicorn
 from fastapi import FastAPI
 from fastapi.routing import APIRoute
+from pydantic import BaseModel
 
 from .auth.router import router as auth_router
 from .config import settings
@@ -37,9 +40,13 @@ app.include_router(
 app.include_router(series_router, prefix="/api/series", tags=["Series"])
 
 
-@app.get("/health", tags=["Health Check"])
-async def get_health() -> dict[str, str]:
-    return {"status": "OK", "version": app.version}
+class Health(BaseModel):
+    status: Literal["ok"] = "ok"
+
+
+@app.get("/api/health", tags=["Health Check"])
+async def get_health() -> Health:
+    return Health()
 
 
 if __name__ == "__main__":

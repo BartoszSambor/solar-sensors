@@ -15,6 +15,16 @@ export type HttpValidationError = {
 };
 
 /**
+ * Health
+ */
+export type Health = {
+    /**
+     * Status
+     */
+    status?: 'ok';
+};
+
+/**
  * LoginRequest
  */
 export type LoginRequest = {
@@ -767,18 +777,14 @@ export type GetHealthData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/health';
+    url: '/api/health';
 };
 
 export type GetHealthResponses = {
     /**
-     * Response Get Health
-     *
      * Successful Response
      */
-    200: {
-        [key: string]: string;
-    };
+    200: Health;
 };
 
 export type GetHealthResponse = GetHealthResponses[keyof GetHealthResponses];
