@@ -104,5 +104,5 @@ def test_list_users_api(admin_client: TestClient, db_session: Session):
         db_session,
         UserCreate(username="listuser_api", password="longenoughpassword"),
     )
-    response = admin_client.get("/api/v1/users/")
+    response = admin_client.get("/api/users/")
     assert response.status_code == 200

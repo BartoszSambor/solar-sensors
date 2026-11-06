@@ -10,7 +10,7 @@ docker compose up -d --build
 ```
 
 - App: https://localhost (http redirects to https)
-- API docs: https://localhost/api/v1/docs
+- API docs: https://localhost/api/docs
 - Login: `FIRST_SUPERUSER_USERNAME` / `FIRST_SUPERUSER_PASSWORD` from `.env`
 
 On start the backend applies migrations and creates the first user from `.env`.
@@ -36,7 +36,7 @@ docker compose exec backend python -m app.manage delete-user <username>
 
 ## Sensors
 
-Each sensor (IoT device) authenticates with its own API key. The key is returned only once, in the response to `POST /api/v1/sensors/` (the UI shows it in a dialog).
+Each sensor (IoT device) authenticates with its own API key. The key is returned only once, in the response to `POST /api/sensors/` (the UI shows it in a dialog).
 
 The device sends measurements with the key:
 ```bash

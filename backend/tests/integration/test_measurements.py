@@ -33,6 +33,24 @@ def test_create_and_get_measurement(
     assert response.json() == measurement
 
 
+def test_sensor_last_measurement_at(
+    client: TestClient, sensor_with_key: tuple[Sensor, str]
+):
+    sensor, api_key = sensor_with_key
+    sensor_url = f"/api/sensors/{sensor.id}"
+    assert client.get(sensor_url).json()["lastMeasurementAt"] is None
+
+    post_measurement(client, api_key, 1, "2026-11-04T12:00:00Z")
+    assert client.get(sensor_url).json()["lastMeasurementAt"] == "2026-11-04T12:00:00Z"
+
+    # A late, older measurement doesn't move it back.
+    post_measurement(client, api_key, 2, "2026-11-04T11:00:00Z")
+    assert client.get(sensor_url).json()["lastMeasurementAt"] == "2026-11-04T12:00:00Z"
+
+    post_measurement(client, api_key, 3, "2026-11-04T13:00:00Z")
+    assert client.get(sensor_url).json()["lastMeasurementAt"] == "2026-11-04T13:00:00Z"
+
+
 def test_sensor_id_param_is_ignored(
     client: TestClient, db_session: Session, sensor_with_key: tuple[Sensor, str]
 ):
@@ -69,7 +87,7 @@ def test_deleted_sensor_key_rejected(
     admin_client: TestClient, sensor_with_key: tuple[Sensor, str]
 ):
     sensor, api_key = sensor_with_key
-    assert admin_client.delete(f"/api/v1/sensors/{sensor.id}").status_code == 204
+    assert admin_client.delete(f"/api/sensors/{sensor.id}").status_code == 204
     response = post_measurement(admin_client, api_key, 1, "2026-11-04T14:27:20Z")
     assert response.status_code == 401
 

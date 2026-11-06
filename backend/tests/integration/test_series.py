@@ -77,6 +77,6 @@ def test_delete_sensor_keeps_measurements(
         admin_client, api_key, 20, "2026-11-04T12:00:00Z"
     ).json()
 
-    assert admin_client.delete(f"/api/v1/sensors/{sensor.id}").status_code == 204
+    assert admin_client.delete(f"/api/sensors/{sensor.id}").status_code == 204
     response = admin_client.get(f"/api/measurements/{measurement['id']}")
     assert response.json() == {**measurement, "sensorId": None}

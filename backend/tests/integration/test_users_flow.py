@@ -21,7 +21,7 @@ def test_list_users(
     )
 
     response = client.get(
-        f"{settings.API_V1_STR}/users/", headers=other_user_token_headers
+        f"{settings.API_STR}/users/", headers=other_user_token_headers
     )
     assert response.status_code == 200
     data = response.json()

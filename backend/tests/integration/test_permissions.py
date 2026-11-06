@@ -11,17 +11,17 @@ from app.series.models import Series
 
 PUBLIC_READS = [
     "/api/series",
-    "/api/v1/sensors/",
+    "/api/sensors/",
     "/api/measurements",
 ]
 
 LOGIN_REQUIRED = [
-    ("GET", "/api/v1/users/"),
+    ("GET", "/api/users/"),
     ("POST", "/api/series"),
     ("PUT", "/api/series/1"),
     ("DELETE", "/api/series/1"),
-    ("POST", "/api/v1/sensors/"),
-    ("DELETE", "/api/v1/sensors/1"),
+    ("POST", "/api/sensors/"),
+    ("DELETE", "/api/sensors/1"),
 ]
 
 
@@ -43,5 +43,5 @@ def test_anonymous_cannot_write(client: TestClient, method: str, url: str):
 
 @pytest.mark.parametrize(("method", "url"), LOGIN_REQUIRED)
 def test_revoked_token_cannot_write(admin_client: TestClient, method: str, url: str):
-    assert admin_client.post("/auth/logout").status_code == 204
+    assert admin_client.post("/api/auth/logout").status_code == 204
     assert admin_client.request(method, url, json={}).status_code == 401

@@ -21,6 +21,7 @@ erDiagram
         VARCHAR(255) name
         INTEGER series_id FK
         VARCHAR(64) api_key_hash UK
+        TIMESTAMP_WITH_TIME_ZONE last_measurement_at "nullable"
         TIMESTAMP_WITH_TIME_ZONE created_at
     }
     series {

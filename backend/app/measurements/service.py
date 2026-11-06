@@ -1,7 +1,7 @@
 from collections.abc import Sequence
 from datetime import datetime
 
-from sqlalchemy import select
+from sqlalchemy import case, or_, select, update
 from sqlalchemy.orm import Session
 
 from ..sensors.models import Sensor
@@ -43,6 +43,22 @@ class MeasurementService:
             timestamp=measurement_in.timestamp,
         )
         db.add(measurement)
+        # Only move forward: a late, older measurement keeps the newer time.
+        # Done in SQL so concurrent requests from one sensor can't go backwards.
+        newest = Sensor.last_measurement_at
+        db.execute(
+            update(Sensor)
+            .where(Sensor.id == sensor.id)
+            .values(
+                last_measurement_at=case(
+                    (
+                        or_(newest.is_(None), newest < measurement_in.timestamp),
+                        measurement_in.timestamp,
+                    ),
+                    else_=newest,
+                )
+            )
+        )
         db.commit()
         db.refresh(measurement)
         return measurement

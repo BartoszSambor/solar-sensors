@@ -143,6 +143,16 @@ export type SensorCreated = {
      */
     id: number;
     /**
+     * Createdat
+     */
+    createdAt: string;
+    /**
+     * Lastmeasurementat
+     *
+     * Timestamp of the newest measurement from this sensor; null until it sends one.
+     */
+    lastMeasurementAt: string | null;
+    /**
      * Apikey
      *
      * Secret for the X-API-Key header. Returned only once.
@@ -166,6 +176,16 @@ export type SensorRead = {
      * Id
      */
     id: number;
+    /**
+     * Createdat
+     */
+    createdAt: string;
+    /**
+     * Lastmeasurementat
+     *
+     * Timestamp of the newest measurement from this sensor; null until it sends one.
+     */
+    lastMeasurementAt: string | null;
 };
 
 /**
@@ -347,7 +367,7 @@ export type ListUsersData = {
          */
         sort_direction?: string;
     };
-    url: '/api/v1/users/';
+    url: '/api/users/';
 };
 
 export type ListUsersErrors = {
@@ -372,7 +392,7 @@ export type LoginData = {
     body: LoginRequest;
     path?: never;
     query?: never;
-    url: '/auth/login';
+    url: '/api/auth/login';
 };
 
 export type LoginErrors = {
@@ -397,7 +417,7 @@ export type LogoutData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/auth/logout';
+    url: '/api/auth/logout';
 };
 
 export type LogoutResponses = {
@@ -413,7 +433,7 @@ export type ChangePasswordData = {
     body: PasswordChangeRequest;
     path?: never;
     query?: never;
-    url: '/auth/password';
+    url: '/api/auth/password';
 };
 
 export type ChangePasswordErrors = {
@@ -438,7 +458,7 @@ export type ListSensorsData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/v1/sensors/';
+    url: '/api/sensors/';
 };
 
 export type ListSensorsResponses = {
@@ -454,7 +474,7 @@ export type CreateSensorData = {
     body: SensorCreate;
     path?: never;
     query?: never;
-    url: '/api/v1/sensors/';
+    url: '/api/sensors/';
 };
 
 export type CreateSensorErrors = {
@@ -484,7 +504,7 @@ export type DeleteSensorData = {
         sensor_id: number;
     };
     query?: never;
-    url: '/api/v1/sensors/{sensor_id}';
+    url: '/api/sensors/{sensor_id}';
 };
 
 export type DeleteSensorErrors = {
@@ -514,7 +534,7 @@ export type GetSensorData = {
         sensor_id: number;
     };
     query?: never;
-    url: '/api/v1/sensors/{sensor_id}';
+    url: '/api/sensors/{sensor_id}';
 };
 
 export type GetSensorErrors = {

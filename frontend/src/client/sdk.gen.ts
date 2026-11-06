@@ -24,7 +24,7 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
 export const listUsers = <ThrowOnError extends boolean = true>(options?: Options<ListUsersData, ThrowOnError>): RequestResult<ListUsersResponses, ListUsersErrors, ThrowOnError> => (options?.client ?? client).get<ListUsersResponses, ListUsersErrors, ThrowOnError>({
     responseType: 'json',
     security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/api/v1/users/',
+    url: '/api/users/',
     ...options
 });
 
@@ -33,7 +33,7 @@ export const listUsers = <ThrowOnError extends boolean = true>(options?: Options
  */
 export const login = <ThrowOnError extends boolean = true>(options: Options<LoginData, ThrowOnError>): RequestResult<LoginResponses, LoginErrors, ThrowOnError> => (options.client ?? client).post<LoginResponses, LoginErrors, ThrowOnError>({
     responseType: 'json',
-    url: '/auth/login',
+    url: '/api/auth/login',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ export const login = <ThrowOnError extends boolean = true>(options: Options<Logi
  */
 export const logout = <ThrowOnError extends boolean = true>(options?: Options<LogoutData, ThrowOnError>): RequestResult<LogoutResponses, unknown, ThrowOnError> => (options?.client ?? client).post<LogoutResponses, unknown, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/auth/logout',
+    url: '/api/auth/logout',
     ...options
 });
 
@@ -55,7 +55,7 @@ export const logout = <ThrowOnError extends boolean = true>(options?: Options<Lo
  */
 export const changePassword = <ThrowOnError extends boolean = true>(options: Options<ChangePasswordData, ThrowOnError>): RequestResult<ChangePasswordResponses, ChangePasswordErrors, ThrowOnError> => (options.client ?? client).put<ChangePasswordResponses, ChangePasswordErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/auth/password',
+    url: '/api/auth/password',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ export const changePassword = <ThrowOnError extends boolean = true>(options: Opt
  */
 export const listSensors = <ThrowOnError extends boolean = true>(options?: Options<ListSensorsData, ThrowOnError>): RequestResult<ListSensorsResponses, unknown, ThrowOnError> => (options?.client ?? client).get<ListSensorsResponses, unknown, ThrowOnError>({
     responseType: 'json',
-    url: '/api/v1/sensors/',
+    url: '/api/sensors/',
     ...options
 });
 
@@ -78,7 +78,7 @@ export const listSensors = <ThrowOnError extends boolean = true>(options?: Optio
 export const createSensor = <ThrowOnError extends boolean = true>(options: Options<CreateSensorData, ThrowOnError>): RequestResult<CreateSensorResponses, CreateSensorErrors, ThrowOnError> => (options.client ?? client).post<CreateSensorResponses, CreateSensorErrors, ThrowOnError>({
     responseType: 'json',
     security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/api/v1/sensors/',
+    url: '/api/sensors/',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ export const createSensor = <ThrowOnError extends boolean = true>(options: Optio
  */
 export const deleteSensor = <ThrowOnError extends boolean = true>(options: Options<DeleteSensorData, ThrowOnError>): RequestResult<DeleteSensorResponses, DeleteSensorErrors, ThrowOnError> => (options.client ?? client).delete<DeleteSensorResponses, DeleteSensorErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/api/v1/sensors/{sensor_id}',
+    url: '/api/sensors/{sensor_id}',
     ...options
 });
 
@@ -100,7 +100,7 @@ export const deleteSensor = <ThrowOnError extends boolean = true>(options: Optio
  */
 export const getSensor = <ThrowOnError extends boolean = true>(options: Options<GetSensorData, ThrowOnError>): RequestResult<GetSensorResponses, GetSensorErrors, ThrowOnError> => (options.client ?? client).get<GetSensorResponses, GetSensorErrors, ThrowOnError>({
     responseType: 'json',
-    url: '/api/v1/sensors/{sensor_id}',
+    url: '/api/sensors/{sensor_id}',
     ...options
 });
 

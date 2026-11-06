@@ -21,30 +21,32 @@ def _operation_id(route: APIRoute) -> str:
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
-    openapi_url=f"{settings.API_V1_STR}/openapi.json",
-    docs_url=f"{settings.API_V1_STR}/docs",
-    redoc_url=f"{settings.API_V1_STR}/redoc",
+    openapi_url=f"{settings.API_STR}/openapi.json",
+    docs_url=f"{settings.API_STR}/docs",
+    redoc_url=f"{settings.API_STR}/redoc",
     generate_unique_id_function=_operation_id,
 )
 
-app.include_router(users_router, prefix=f"{settings.API_V1_STR}/users", tags=["Users"])
+app.include_router(users_router, prefix=f"{settings.API_STR}/users", tags=["Users"])
 app.include_router(
     auth_router, prefix=settings.AUTH_STR, tags=["Authorization & Profile"]
 )
 app.include_router(
-    sensors_router, prefix=f"{settings.API_V1_STR}/sensors", tags=["Sensors"]
+    sensors_router, prefix=f"{settings.API_STR}/sensors", tags=["Sensors"]
 )
 app.include_router(
-    measurements_router, prefix="/api/measurements", tags=["Measurements"]
+    measurements_router,
+    prefix=f"{settings.API_STR}/measurements",
+    tags=["Measurements"],
 )
-app.include_router(series_router, prefix="/api/series", tags=["Series"])
+app.include_router(series_router, prefix=f"{settings.API_STR}/series", tags=["Series"])
 
 
 class Health(BaseModel):
     status: Literal["ok"] = "ok"
 
 
-@app.get("/api/health", tags=["Health Check"])
+@app.get(f"{settings.API_STR}/health", tags=["Health Check"])
 async def get_health() -> Health:
     return Health()
 

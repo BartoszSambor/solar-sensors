@@ -1,4 +1,6 @@
-from sqlalchemy import ForeignKey, String
+from datetime import datetime
+
+from sqlalchemy import DateTime, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from ..models import Base, TimeStampMixin
@@ -15,3 +17,8 @@ class Sensor(Base, TimeStampMixin):
     )
     # The API key is shown once on creation; only its hash is stored.
     api_key_hash: Mapped[str] = mapped_column(String(64), unique=True)
+    # Timestamp of the newest measurement this sensor sent (None: none yet).
+    # Kept up to date by measurement_service.create_measurement.
+    last_measurement_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True)
+    )

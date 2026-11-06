@@ -18,8 +18,8 @@ class Settings(BaseSettings):
         env_file=".env", env_ignore_empty=True, extra="ignore"
     )
 
-    API_V1_STR: ClassVar[str] = "/api/v1"
-    AUTH_STR: ClassVar[str] = "/auth"
+    API_STR: ClassVar[str] = "/api"
+    AUTH_STR: ClassVar[str] = "/api/auth"
     VERSION: ClassVar[str] = _read_version()
 
     PROJECT_NAME: str = "Solar Sensors"
