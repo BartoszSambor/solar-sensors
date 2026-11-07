@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 import pytest
 from fastapi.testclient import TestClient
@@ -88,6 +88,18 @@ def test_value_outside_series_range_rejected(
     assert response.status_code == 422
 
 
+def test_future_timestamp_rejected(
+    client: TestClient, sensor_with_key: tuple[Sensor, str]
+):
+    _, api_key = sensor_with_key
+    now = datetime.now(UTC)
+    late = (now + timedelta(minutes=10)).isoformat()
+    assert post_measurement(client, api_key, 1, late).status_code == 422
+    # Small clock drift is tolerated.
+    near = (now + timedelta(minutes=1)).isoformat()
+    assert post_measurement(client, api_key, 1, near).status_code == 201
+
+
 def test_missing_or_invalid_api_key_rejected(
     client: TestClient, admin_client: TestClient
 ):
@@ -146,5 +158,6 @@ def test_list_filters_and_sort(
 
 
 def test_list_rejects_invalid_params(client: TestClient):
-    assert client.get(URL, params={"series": "1,a"}).status_code == 422
-    assert client.get(URL, params={"sort": "value"}).status_code == 422
+    assert client.get(URL, params={"series": "1,a"}).status_code == 400
+    assert client.get(URL, params={"sort": "value"}).status_code == 400
+    assert client.get(URL, params={"limit": 0}).status_code == 400

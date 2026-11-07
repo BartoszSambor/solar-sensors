@@ -7,6 +7,7 @@ from pydantic import BaseModel
 
 from .auth.router import router as auth_router
 from .config import settings
+from .errors import setup_errors
 from .measurements.router import router as measurements_router
 from .sensors.router import router as sensors_router
 from .series.router import router as series_router
@@ -26,6 +27,7 @@ app = FastAPI(
     redoc_url=f"{settings.API_STR}/redoc",
     generate_unique_id_function=_operation_id,
 )
+setup_errors(app)
 
 app.include_router(users_router, prefix=f"{settings.API_STR}/users", tags=["Users"])
 app.include_router(

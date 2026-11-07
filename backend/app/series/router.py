@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Response, status
 
 from ..config import settings
 from ..dependencies import DbSession, login_required
+from ..errors import problems
 from .models import Series
 from .schemas import SeriesCreate, SeriesRead
 from .service import series_service
@@ -26,7 +27,7 @@ def _check_name_free(db: DbSession, name: str, series_id: int | None = None) -> 
         )
 
 
-@router.get("", response_model=list[SeriesRead])
+@router.get("", response_model=list[SeriesRead], responses=problems(406))
 def list_series(db: DbSession) -> list[Series]:
     return list(series_service.list_series(db))
 
@@ -36,6 +37,7 @@ def list_series(db: DbSession) -> list[Series]:
     response_model=SeriesRead,
     status_code=status.HTTP_201_CREATED,
     dependencies=[login_required],
+    responses=problems(400, 401, 409, 415, 422),
 )
 def create_series(series_in: SeriesCreate, db: DbSession, response: Response) -> Series:
     _check_name_free(db, series_in.name)
@@ -44,12 +46,17 @@ def create_series(series_in: SeriesCreate, db: DbSession, response: Response) ->
     return series
 
 
-@router.get("/{series_id}", response_model=SeriesRead)
+@router.get("/{series_id}", response_model=SeriesRead, responses=problems(404))
 def get_series(series_id: int, db: DbSession) -> Series:
     return _get_series_or_404(db, series_id)
 
 
-@router.put("/{series_id}", response_model=SeriesRead, dependencies=[login_required])
+@router.put(
+    "/{series_id}",
+    response_model=SeriesRead,
+    dependencies=[login_required],
+    responses=problems(400, 401, 404, 409, 415, 422),
+)
 def update_series(series_id: int, series_in: SeriesCreate, db: DbSession) -> Series:
     series = _get_series_or_404(db, series_id)
     _check_name_free(db, series_in.name, series_id)
@@ -69,6 +76,7 @@ def update_series(series_id: int, series_in: SeriesCreate, db: DbSession) -> Ser
     "/{series_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     dependencies=[login_required],
+    responses=problems(401, 404),
 )
 def delete_series(series_id: int, db: DbSession) -> None:
     """Deletes the series together with all its sensors and measurements."""

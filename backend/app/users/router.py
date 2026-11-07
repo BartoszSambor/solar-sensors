@@ -4,10 +4,11 @@ from typing import Annotated
 from fastapi import APIRouter, Query
 
 from ..dependencies import DbSession, login_required
+from ..errors import problems
 from . import schemas as user_schemas
 from .service import user_service
 
-router = APIRouter(dependencies=[login_required])
+router = APIRouter(dependencies=[login_required], responses=problems(401))
 
 
 @router.get("/", response_model=user_schemas.UserListResponse)

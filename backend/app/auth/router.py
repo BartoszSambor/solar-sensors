@@ -1,13 +1,16 @@
 from fastapi import APIRouter, HTTPException, status
 
 from ..dependencies import CurrentSession, DbSession
+from ..errors import problems
 from . import schemas, security
 from .service import auth_service
 
 router = APIRouter()
 
 
-@router.post("/login", response_model=schemas.LoginResponse)
+@router.post(
+    "/login", response_model=schemas.LoginResponse, responses=problems(400, 401)
+)
 def login(credentials: schemas.LoginRequest, db: DbSession) -> schemas.LoginResponse:
     user = auth_service.authenticate_user(
         db, username=credentials.username, password=credentials.password
@@ -23,12 +26,16 @@ def login(credentials: schemas.LoginRequest, db: DbSession) -> schemas.LoginResp
     )
 
 
-@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT, responses=problems(401))
 def logout(session: CurrentSession, db: DbSession) -> None:
     auth_service.revoke_session(db, session)
 
 
-@router.put("/password", status_code=status.HTTP_204_NO_CONTENT)
+@router.put(
+    "/password",
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses=problems(400, 401, 403, 415, 422),
+)
 def change_password(
     password_in: schemas.PasswordChangeRequest,
     session: CurrentSession,

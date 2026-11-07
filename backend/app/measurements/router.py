@@ -1,10 +1,11 @@
-from datetime import datetime
+from datetime import UTC, datetime, timedelta
 from typing import Annotated, Literal
 
 from fastapi import APIRouter, HTTPException, Query, Response, status
 
 from ..config import settings
 from ..dependencies import CurrentSensor, DbSession
+from ..errors import problems
 from ..series.models import Series
 from .models import Measurement
 from .schemas import MeasurementCreate, MeasurementRead
@@ -12,9 +13,17 @@ from .service import measurement_service
 
 router = APIRouter()
 
+# How far ahead of the server clock a sensor's timestamp may be.
+MAX_CLOCK_SKEW = timedelta(minutes=5)
+
 
 # response_model_exclude_none: sensorId is left out (not null) once the sensor is gone.
-@router.get("", response_model=list[MeasurementRead], response_model_exclude_none=True)
+@router.get(
+    "",
+    response_model=list[MeasurementRead],
+    response_model_exclude_none=True,
+    responses=problems(400),
+)
 def list_measurements(
     db: DbSession,
     series: Annotated[
@@ -39,6 +48,7 @@ def list_measurements(
     response_model=MeasurementRead,
     response_model_exclude_none=True,
     status_code=status.HTTP_201_CREATED,
+    responses=problems(400, 401, 415, 422),
 )
 def create_measurement(
     measurement_in: MeasurementCreate,
@@ -55,6 +65,12 @@ def create_measurement(
             detail=f"Value out of series range "
             f"[{series.min_value}, {series.max_value}]",
         )
+    timestamp = measurement_in.timestamp
+    if timestamp and timestamp > datetime.now(UTC) + MAX_CLOCK_SKEW:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail="Timestamp is more than 5 minutes in the future",
+        )
     measurement = measurement_service.create_measurement(db, sensor, measurement_in)
     response.headers["Location"] = f"{settings.API_STR}/measurements/{measurement.id}"
     return measurement
@@ -64,6 +80,7 @@ def create_measurement(
     "/{measurement_id}",
     response_model=MeasurementRead,
     response_model_exclude_none=True,
+    responses=problems(404),
 )
 def get_measurement(measurement_id: int, db: DbSession) -> Measurement:
     measurement = measurement_service.get_measurement(db, measurement_id)

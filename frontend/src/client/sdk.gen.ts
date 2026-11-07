@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { ChangePasswordData, ChangePasswordErrors, ChangePasswordResponses, CreateMeasurementData, CreateMeasurementErrors, CreateMeasurementResponses, CreateSensorData, CreateSensorErrors, CreateSensorResponses, CreateSeriesData, CreateSeriesErrors, CreateSeriesResponses, DeleteSensorData, DeleteSensorErrors, DeleteSensorResponses, DeleteSeriesData, DeleteSeriesErrors, DeleteSeriesResponses, GetHealthData, GetHealthResponses, GetMeasurementData, GetMeasurementErrors, GetMeasurementResponses, GetSensorData, GetSensorErrors, GetSensorResponses, GetSeriesData, GetSeriesErrors, GetSeriesResponses, ListMeasurementsData, ListMeasurementsErrors, ListMeasurementsResponses, ListSensorsData, ListSensorsResponses, ListSeriesData, ListSeriesResponses, ListUsersData, ListUsersErrors, ListUsersResponses, LoginData, LoginErrors, LoginResponses, LogoutData, LogoutResponses, UpdateSeriesData, UpdateSeriesErrors, UpdateSeriesResponses } from './types.gen';
+import type { ChangePasswordData, ChangePasswordErrors, ChangePasswordResponses, CreateMeasurementData, CreateMeasurementErrors, CreateMeasurementResponses, CreateSensorData, CreateSensorErrors, CreateSensorResponses, CreateSeriesData, CreateSeriesErrors, CreateSeriesResponses, DeleteSensorData, DeleteSensorErrors, DeleteSensorResponses, DeleteSeriesData, DeleteSeriesErrors, DeleteSeriesResponses, GetHealthData, GetHealthResponses, GetMeasurementData, GetMeasurementErrors, GetMeasurementResponses, GetSensorData, GetSensorErrors, GetSensorResponses, GetSeriesData, GetSeriesErrors, GetSeriesResponses, ListMeasurementsData, ListMeasurementsErrors, ListMeasurementsResponses, ListSensorsData, ListSensorsErrors, ListSensorsResponses, ListSeriesData, ListSeriesErrors, ListSeriesResponses, ListUsersData, ListUsersErrors, ListUsersResponses, LoginData, LoginErrors, LoginResponses, LogoutData, LogoutErrors, LogoutResponses, UpdateSeriesData, UpdateSeriesErrors, UpdateSeriesResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -44,7 +44,7 @@ export const login = <ThrowOnError extends boolean = true>(options: Options<Logi
 /**
  * Logout
  */
-export const logout = <ThrowOnError extends boolean = true>(options?: Options<LogoutData, ThrowOnError>): RequestResult<LogoutResponses, unknown, ThrowOnError> => (options?.client ?? client).post<LogoutResponses, unknown, ThrowOnError>({
+export const logout = <ThrowOnError extends boolean = true>(options?: Options<LogoutData, ThrowOnError>): RequestResult<LogoutResponses, LogoutErrors, ThrowOnError> => (options?.client ?? client).post<LogoutResponses, LogoutErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/auth/logout',
     ...options
@@ -66,7 +66,7 @@ export const changePassword = <ThrowOnError extends boolean = true>(options: Opt
 /**
  * List Sensors
  */
-export const listSensors = <ThrowOnError extends boolean = true>(options?: Options<ListSensorsData, ThrowOnError>): RequestResult<ListSensorsResponses, unknown, ThrowOnError> => (options?.client ?? client).get<ListSensorsResponses, unknown, ThrowOnError>({
+export const listSensors = <ThrowOnError extends boolean = true>(options?: Options<ListSensorsData, ThrowOnError>): RequestResult<ListSensorsResponses, ListSensorsErrors, ThrowOnError> => (options?.client ?? client).get<ListSensorsResponses, ListSensorsErrors, ThrowOnError>({
     responseType: 'json',
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/sensors',
@@ -143,7 +143,7 @@ export const getMeasurement = <ThrowOnError extends boolean = true>(options: Opt
 /**
  * List Series
  */
-export const listSeries = <ThrowOnError extends boolean = true>(options?: Options<ListSeriesData, ThrowOnError>): RequestResult<ListSeriesResponses, unknown, ThrowOnError> => (options?.client ?? client).get<ListSeriesResponses, unknown, ThrowOnError>({
+export const listSeries = <ThrowOnError extends boolean = true>(options?: Options<ListSeriesData, ThrowOnError>): RequestResult<ListSeriesResponses, ListSeriesErrors, ThrowOnError> => (options?.client ?? client).get<ListSeriesResponses, ListSeriesErrors, ThrowOnError>({
     responseType: 'json',
     url: '/api/series',
     ...options

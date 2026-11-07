@@ -5,16 +5,6 @@ export type ClientOptions = {
 };
 
 /**
- * HTTPValidationError
- */
-export type HttpValidationError = {
-    /**
-     * Detail
-     */
-    detail?: Array<ValidationError>;
-};
-
-/**
  * Health
  */
 export type Health = {
@@ -112,6 +102,54 @@ export type PasswordChangeRequest = {
      * Newpassword
      */
     newPassword: string;
+};
+
+/**
+ * Problem
+ *
+ * Error description per RFC 9457 (Problem Details for HTTP APIs).
+ */
+export type Problem = {
+    /**
+     * Type
+     */
+    type?: string;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Status
+     */
+    status: number;
+    /**
+     * Detail
+     */
+    detail?: string | null;
+    /**
+     * Instance
+     */
+    instance?: string | null;
+    /**
+     * Errors
+     *
+     * Validation errors of individual fields
+     */
+    errors?: Array<ProblemError> | null;
+};
+
+/**
+ * ProblemError
+ */
+export type ProblemError = {
+    /**
+     * Field
+     */
+    field: string;
+    /**
+     * Message
+     */
+    message: string;
 };
 
 /**
@@ -298,34 +336,6 @@ export type UserRead = {
     created_at: string;
 };
 
-/**
- * ValidationError
- */
-export type ValidationError = {
-    /**
-     * Location
-     */
-    loc: Array<string | number>;
-    /**
-     * Message
-     */
-    msg: string;
-    /**
-     * Error Type
-     */
-    type: string;
-    /**
-     * Input
-     */
-    input?: unknown;
-    /**
-     * Context
-     */
-    ctx?: {
-        [key: string]: unknown;
-    };
-};
-
 export type ListUsersData = {
     body?: never;
     path?: never;
@@ -368,9 +378,13 @@ export type ListUsersData = {
 
 export type ListUsersErrors = {
     /**
-     * Validation Error
+     * Bad Request
      */
-    422: HttpValidationError;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
 };
 
 export type ListUsersError = ListUsersErrors[keyof ListUsersErrors];
@@ -393,9 +407,13 @@ export type LoginData = {
 
 export type LoginErrors = {
     /**
-     * Validation Error
+     * Bad Request
      */
-    422: HttpValidationError;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
 };
 
 export type LoginError = LoginErrors[keyof LoginErrors];
@@ -416,6 +434,15 @@ export type LogoutData = {
     url: '/api/auth/logout';
 };
 
+export type LogoutErrors = {
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+};
+
+export type LogoutError = LogoutErrors[keyof LogoutErrors];
+
 export type LogoutResponses = {
     /**
      * Successful Response
@@ -434,9 +461,25 @@ export type ChangePasswordData = {
 
 export type ChangePasswordErrors = {
     /**
-     * Validation Error
+     * Bad Request
      */
-    422: HttpValidationError;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Unsupported Media Type
+     */
+    415: Problem;
+    /**
+     * Unprocessable Content
+     */
+    422: Problem;
 };
 
 export type ChangePasswordError = ChangePasswordErrors[keyof ChangePasswordErrors];
@@ -456,6 +499,15 @@ export type ListSensorsData = {
     query?: never;
     url: '/api/sensors';
 };
+
+export type ListSensorsErrors = {
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+};
+
+export type ListSensorsError = ListSensorsErrors[keyof ListSensorsErrors];
 
 export type ListSensorsResponses = {
     /**
@@ -477,9 +529,21 @@ export type CreateSensorData = {
 
 export type CreateSensorErrors = {
     /**
-     * Validation Error
+     * Bad Request
      */
-    422: HttpValidationError;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Unsupported Media Type
+     */
+    415: Problem;
+    /**
+     * Unprocessable Content
+     */
+    422: Problem;
 };
 
 export type CreateSensorError = CreateSensorErrors[keyof CreateSensorErrors];
@@ -507,9 +571,17 @@ export type DeleteSensorData = {
 
 export type DeleteSensorErrors = {
     /**
-     * Validation Error
+     * Bad Request
      */
-    422: HttpValidationError;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
 };
 
 export type DeleteSensorError = DeleteSensorErrors[keyof DeleteSensorErrors];
@@ -537,9 +609,17 @@ export type GetSensorData = {
 
 export type GetSensorErrors = {
     /**
-     * Validation Error
+     * Bad Request
      */
-    422: HttpValidationError;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
 };
 
 export type GetSensorError = GetSensorErrors[keyof GetSensorErrors];
@@ -585,9 +665,9 @@ export type ListMeasurementsData = {
 
 export type ListMeasurementsErrors = {
     /**
-     * Validation Error
+     * Bad Request
      */
-    422: HttpValidationError;
+    400: Problem;
 };
 
 export type ListMeasurementsError = ListMeasurementsErrors[keyof ListMeasurementsErrors];
@@ -612,9 +692,21 @@ export type CreateMeasurementData = {
 
 export type CreateMeasurementErrors = {
     /**
-     * Validation Error
+     * Bad Request
      */
-    422: HttpValidationError;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Unsupported Media Type
+     */
+    415: Problem;
+    /**
+     * Unprocessable Content
+     */
+    422: Problem;
 };
 
 export type CreateMeasurementError = CreateMeasurementErrors[keyof CreateMeasurementErrors];
@@ -642,9 +734,13 @@ export type GetMeasurementData = {
 
 export type GetMeasurementErrors = {
     /**
-     * Validation Error
+     * Bad Request
      */
-    422: HttpValidationError;
+    400: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
 };
 
 export type GetMeasurementError = GetMeasurementErrors[keyof GetMeasurementErrors];
@@ -664,6 +760,15 @@ export type ListSeriesData = {
     query?: never;
     url: '/api/series';
 };
+
+export type ListSeriesErrors = {
+    /**
+     * Not Acceptable
+     */
+    406: Problem;
+};
+
+export type ListSeriesError = ListSeriesErrors[keyof ListSeriesErrors];
 
 export type ListSeriesResponses = {
     /**
@@ -685,9 +790,25 @@ export type CreateSeriesData = {
 
 export type CreateSeriesErrors = {
     /**
-     * Validation Error
+     * Bad Request
      */
-    422: HttpValidationError;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Conflict
+     */
+    409: Problem;
+    /**
+     * Unsupported Media Type
+     */
+    415: Problem;
+    /**
+     * Unprocessable Content
+     */
+    422: Problem;
 };
 
 export type CreateSeriesError = CreateSeriesErrors[keyof CreateSeriesErrors];
@@ -715,9 +836,17 @@ export type DeleteSeriesData = {
 
 export type DeleteSeriesErrors = {
     /**
-     * Validation Error
+     * Bad Request
      */
-    422: HttpValidationError;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
 };
 
 export type DeleteSeriesError = DeleteSeriesErrors[keyof DeleteSeriesErrors];
@@ -745,9 +874,13 @@ export type GetSeriesData = {
 
 export type GetSeriesErrors = {
     /**
-     * Validation Error
+     * Bad Request
      */
-    422: HttpValidationError;
+    400: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
 };
 
 export type GetSeriesError = GetSeriesErrors[keyof GetSeriesErrors];
@@ -775,9 +908,29 @@ export type UpdateSeriesData = {
 
 export type UpdateSeriesErrors = {
     /**
-     * Validation Error
+     * Bad Request
      */
-    422: HttpValidationError;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Conflict
+     */
+    409: Problem;
+    /**
+     * Unsupported Media Type
+     */
+    415: Problem;
+    /**
+     * Unprocessable Content
+     */
+    422: Problem;
 };
 
 export type UpdateSeriesError = UpdateSeriesErrors[keyof UpdateSeriesErrors];

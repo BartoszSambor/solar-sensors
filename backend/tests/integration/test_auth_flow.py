@@ -21,7 +21,7 @@ def _login(client: TestClient, login_data: dict = LOGIN) -> dict:
 
 def _is_authorized(client: TestClient, headers: dict) -> bool:
     # A password change with a wrong current password has no side effects:
-    # 400 when the token is valid, 401 when it isn't.
+    # 403 when the token is valid, 401 when it isn't.
     response = client.put(
         f"{settings.AUTH_STR}/password",
         headers=headers,
@@ -92,7 +92,7 @@ def test_change_password_wrong_current(client: TestClient, user_token_headers: d
     response = client.put(
         f"{settings.AUTH_STR}/password", headers=user_token_headers, json=password_data
     )
-    assert response.status_code == 400
+    assert response.status_code == 403
 
 
 def test_only_token_hash_is_stored(
