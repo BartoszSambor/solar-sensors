@@ -10,6 +10,7 @@ import {
 } from "@/client";
 import PageLayout from "../../components/common/PageLayout";
 import { isLoggedIn } from "../../utils/auth";
+import { seriesLabel } from "../../utils/series";
 import { errorMessage, useFetch } from "../../utils/useFetch";
 import MeasurementsChart from "./Chart";
 
@@ -95,7 +96,8 @@ const MeasurementsTablePage = () => {
 				headers: { "X-API-Key": apiKey },
 				body: {
 					value: Number(value),
-					timestamp: toIso(timestamp) ?? new Date().toISOString(),
+					// Left out when empty: the server uses its current time.
+					timestamp: toIso(timestamp),
 				},
 			});
 			setValue("");
@@ -165,7 +167,7 @@ const MeasurementsTablePage = () => {
 				>
 					{seriesList.map((s) => (
 						<MenuItem key={s.id} value={s.id}>
-							{s.name} ({s.unit})
+							{seriesLabel(s)}
 						</MenuItem>
 					))}
 				</TextField>

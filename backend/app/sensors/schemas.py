@@ -6,7 +6,7 @@ from ..schemas import CamelModel
 
 
 class SensorCreate(CamelModel):
-    name: str
+    name: str = Field(min_length=1, max_length=100)
     series_id: int
 
 
@@ -25,7 +25,3 @@ class SensorCreated(SensorRead):
     api_key: str = Field(
         description="Secret for the X-API-Key header. Returned only once."
     )
-
-
-class SensorsList(CamelModel):
-    sensors: list[SensorRead]

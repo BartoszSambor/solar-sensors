@@ -1,3 +1,5 @@
+from datetime import UTC, datetime
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
@@ -21,6 +23,7 @@ def test_create_and_get_measurement(
     response = post_measurement(client, api_key, 21.5, "2026-11-04T14:27:20.363Z")
     assert response.status_code == 201
     measurement = response.json()
+    assert response.headers["Location"] == f"{URL}/{measurement['id']}"
     assert measurement == {
         "id": measurement["id"],
         "seriesId": sensor.series_id,
@@ -33,22 +36,34 @@ def test_create_and_get_measurement(
     assert response.json() == measurement
 
 
-def test_sensor_last_measurement_at(
+def test_timestamp_defaults_to_now(
     client: TestClient, sensor_with_key: tuple[Sensor, str]
+):
+    _, api_key = sensor_with_key
+    before = datetime.now(UTC)
+    response = client.post(URL, headers={"X-API-Key": api_key}, json={"value": 1})
+    assert response.status_code == 201
+    timestamp = datetime.fromisoformat(response.json()["timestamp"])
+    assert before <= timestamp <= datetime.now(UTC)
+
+
+def test_sensor_last_measurement_at(
+    admin_client: TestClient, sensor_with_key: tuple[Sensor, str]
 ):
     sensor, api_key = sensor_with_key
     sensor_url = f"/api/sensors/{sensor.id}"
-    assert client.get(sensor_url).json()["lastMeasurementAt"] is None
 
-    post_measurement(client, api_key, 1, "2026-11-04T12:00:00Z")
-    assert client.get(sensor_url).json()["lastMeasurementAt"] == "2026-11-04T12:00:00Z"
+    def last() -> str | None:
+        return admin_client.get(sensor_url).json()["lastMeasurementAt"]
 
+    assert last() is None
+    post_measurement(admin_client, api_key, 1, "2026-11-04T12:00:00Z")
+    assert last() == "2026-11-04T12:00:00Z"
     # A late, older measurement doesn't move it back.
-    post_measurement(client, api_key, 2, "2026-11-04T11:00:00Z")
-    assert client.get(sensor_url).json()["lastMeasurementAt"] == "2026-11-04T12:00:00Z"
-
-    post_measurement(client, api_key, 3, "2026-11-04T13:00:00Z")
-    assert client.get(sensor_url).json()["lastMeasurementAt"] == "2026-11-04T13:00:00Z"
+    post_measurement(admin_client, api_key, 2, "2026-11-04T11:00:00Z")
+    assert last() == "2026-11-04T12:00:00Z"
+    post_measurement(admin_client, api_key, 3, "2026-11-04T13:00:00Z")
+    assert last() == "2026-11-04T13:00:00Z"
 
 
 def test_sensor_id_param_is_ignored(

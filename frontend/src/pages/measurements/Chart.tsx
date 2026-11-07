@@ -1,6 +1,7 @@
 import { useXScale, useYScale } from "@mui/x-charts/hooks";
 import { LineChart } from "@mui/x-charts/LineChart";
 import type { MeasurementRead, SeriesRead } from "@/client";
+import { seriesLabel } from "../../utils/series";
 
 interface MeasurementsChartProps {
 	measurements: MeasurementRead[];
@@ -62,18 +63,18 @@ const MeasurementsChart = ({
 			]}
 			yAxis={series.map((s, i) => ({
 				id: String(s.id),
-				label: s.unit,
+				label: s.unit ?? undefined,
 				position: i % 2 ? "right" : "left",
 			}))}
 			series={series.map((s) => ({
 				id: String(s.id),
 				yAxisId: String(s.id),
-				label: `${s.name} (${s.unit})`,
+				label: seriesLabel(s),
 				color: s.color,
 				data: values.get(s.id) ?? [],
 				connectNulls: true,
 				valueFormatter: (value) =>
-					value === null ? null : `${value} ${s.unit}`,
+					value === null ? null : `${value} ${s.unit ?? ""}`.trim(),
 				showMark: true,
 			}))}
 		>

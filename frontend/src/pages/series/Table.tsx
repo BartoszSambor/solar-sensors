@@ -62,6 +62,9 @@ const SeriesTablePage = () => {
 			...form,
 			minValue: Number(form.minValue),
 			maxValue: Number(form.maxValue),
+			// Optional: empty means none.
+			unit: form.unit || null,
+			icon: form.icon || null,
 		};
 		try {
 			if (editedId === undefined) {
@@ -83,9 +86,9 @@ const SeriesTablePage = () => {
 			name: series.name,
 			minValue: String(series.minValue),
 			maxValue: String(series.maxValue),
-			unit: series.unit,
+			unit: series.unit ?? "",
 			color: series.color,
-			icon: series.icon,
+			icon: series.icon ?? "",
 		});
 	};
 
@@ -177,7 +180,7 @@ const SeriesTablePage = () => {
 						slotProps={{ htmlInput: { step: "any" } }}
 						{...field("maxValue")}
 					/>
-					<TextField label="Unit" size="small" required {...field("unit")} />
+					<TextField label="Unit" size="small" {...field("unit")} />
 					<TextField
 						label="Color"
 						type="color"
@@ -185,7 +188,7 @@ const SeriesTablePage = () => {
 						sx={{ width: 90 }}
 						{...field("color")}
 					/>
-					<TextField label="Icon" size="small" required {...field("icon")} />
+					<TextField label="Icon" size="small" {...field("icon")} />
 					<Button type="submit" variant="contained">
 						{editedId === undefined ? "Add Series" : "Save"}
 					</Button>

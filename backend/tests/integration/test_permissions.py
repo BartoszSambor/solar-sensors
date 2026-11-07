@@ -1,4 +1,5 @@
-"""Anonymous users can read data; writes and the users list need a bearer token.
+"""Anonymous users can read series and measurements; writes, sensors and the
+users list need a bearer token.
 
 Adding measurements is the exception: it needs a sensor's X-API-Key instead
 (see test_measurements.py).
@@ -11,16 +12,17 @@ from app.series.models import Series
 
 PUBLIC_READS = [
     "/api/series",
-    "/api/sensors/",
     "/api/measurements",
 ]
 
 LOGIN_REQUIRED = [
     ("GET", "/api/users/"),
+    ("GET", "/api/sensors"),
+    ("GET", "/api/sensors/1"),
     ("POST", "/api/series"),
     ("PUT", "/api/series/1"),
     ("DELETE", "/api/series/1"),
-    ("POST", "/api/sensors/"),
+    ("POST", "/api/sensors"),
     ("DELETE", "/api/sensors/1"),
 ]
 

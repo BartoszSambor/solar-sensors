@@ -16,10 +16,19 @@ function App() {
 		<ThemeProvider theme={prefersDarkMode ? darkTheme : lightTheme}>
 			<CssBaseline />
 			<Routes>
-				<Route path="/" element={<Navigate to="/sensors" replace />} />
+				<Route path="/" element={<Navigate to="/measurements" replace />} />
 				<Route path="/login" element={<LoginPage />} />
 				<Route path="/series" element={<SeriesTablePage />} />
-				<Route path="/sensors" element={<SensorsTablePage />} />
+				<Route
+					path="/sensors"
+					element={
+						isLoggedIn() ? (
+							<SensorsTablePage />
+						) : (
+							<Navigate to="/login" replace />
+						)
+					}
+				/>
 				<Route path="/measurements" element={<MeasurementsTablePage />} />
 				<Route
 					path="/simulator"

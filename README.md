@@ -36,7 +36,7 @@ docker compose exec backend python -m app.manage delete-user <username>
 
 ## Sensors
 
-Each sensor (IoT device) authenticates with its own API key. The key is returned only once, in the response to `POST /api/sensors/` (the UI shows it in a dialog).
+Each sensor (IoT device) authenticates with its own API key. The key is returned only once, in the response to `POST /api/sensors` (the UI shows it in a dialog).
 
 The device sends measurements with the key:
 ```bash

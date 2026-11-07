@@ -9,7 +9,7 @@ class Series(Base):
 
     __tablename__ = "series"
     __table_args__ = (
-        CheckConstraint("min_value <= max_value", name="ck_series_value_range"),
+        CheckConstraint("min_value < max_value", name="ck_series_value_range"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -17,5 +17,5 @@ class Series(Base):
     min_value: Mapped[float]
     max_value: Mapped[float]
     color: Mapped[str] = mapped_column(String(7))  # "#rrggbb"
-    icon: Mapped[str] = mapped_column(String(64))
-    unit: Mapped[str] = mapped_column(String(32))
+    icon: Mapped[str | None] = mapped_column(String(64))
+    unit: Mapped[str | None] = mapped_column(String(32))

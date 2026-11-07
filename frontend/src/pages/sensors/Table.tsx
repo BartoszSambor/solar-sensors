@@ -20,12 +20,13 @@ import {
 } from "@/client";
 import PageLayout from "../../components/common/PageLayout";
 import { isLoggedIn } from "../../utils/auth";
+import { seriesLabel } from "../../utils/series";
 import { errorMessage, useFetch } from "../../utils/useFetch";
 import ApiKeyDialog from "./ApiKeyDialog";
 
 const SensorsTablePage = () => {
 	const [reloadKey, setReloadKey] = useState(0);
-	// Anonymous users can browse; only signed-in users can change data.
+	// The page is only reachable when signed in (sensors are admin-only).
 	const canEdit = isLoggedIn();
 	const [name, setName] = useState("");
 	const [seriesId, setSeriesId] = useState("");
@@ -119,7 +120,7 @@ const SensorsTablePage = () => {
 					>
 						{(seriesList ?? []).map((series) => (
 							<MenuItem key={series.id} value={series.id}>
-								{series.name} ({series.unit})
+								{seriesLabel(series)}
 							</MenuItem>
 						))}
 					</TextField>
@@ -135,7 +136,7 @@ const SensorsTablePage = () => {
 			)}
 			<Box sx={{ height: 500 }}>
 				<DataGrid
-					rows={data?.sensors ?? []}
+					rows={data ?? []}
 					columns={
 						canEdit ? columns : columns.filter((c) => c.field !== "actions")
 					}

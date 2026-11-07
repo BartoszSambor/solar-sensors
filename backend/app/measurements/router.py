@@ -1,8 +1,9 @@
 from datetime import datetime
 from typing import Annotated, Literal
 
-from fastapi import APIRouter, HTTPException, Query, status
+from fastapi import APIRouter, HTTPException, Query, Response, status
 
+from ..config import settings
 from ..dependencies import CurrentSensor, DbSession
 from ..series.models import Series
 from .models import Measurement
@@ -12,7 +13,8 @@ from .service import measurement_service
 router = APIRouter()
 
 
-@router.get("", response_model=list[MeasurementRead])
+# response_model_exclude_none: sensorId is left out (not null) once the sensor is gone.
+@router.get("", response_model=list[MeasurementRead], response_model_exclude_none=True)
 def list_measurements(
     db: DbSession,
     series: Annotated[
@@ -32,9 +34,17 @@ def list_measurements(
     )
 
 
-@router.post("", response_model=MeasurementRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "",
+    response_model=MeasurementRead,
+    response_model_exclude_none=True,
+    status_code=status.HTTP_201_CREATED,
+)
 def create_measurement(
-    measurement_in: MeasurementCreate, db: DbSession, sensor: CurrentSensor
+    measurement_in: MeasurementCreate,
+    db: DbSession,
+    sensor: CurrentSensor,
+    response: Response,
 ) -> Measurement:
     """Called by the sensor itself; the X-API-Key header identifies it."""
     series = db.get(Series, sensor.series_id)
@@ -45,10 +55,16 @@ def create_measurement(
             detail=f"Value out of series range "
             f"[{series.min_value}, {series.max_value}]",
         )
-    return measurement_service.create_measurement(db, sensor, measurement_in)
+    measurement = measurement_service.create_measurement(db, sensor, measurement_in)
+    response.headers["Location"] = f"{settings.API_STR}/measurements/{measurement.id}"
+    return measurement
 
 
-@router.get("/{measurement_id}", response_model=MeasurementRead)
+@router.get(
+    "/{measurement_id}",
+    response_model=MeasurementRead,
+    response_model_exclude_none=True,
+)
 def get_measurement(measurement_id: int, db: DbSession) -> Measurement:
     measurement = measurement_service.get_measurement(db, measurement_id)
     if not measurement:

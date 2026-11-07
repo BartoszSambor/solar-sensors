@@ -68,7 +68,8 @@ export const changePassword = <ThrowOnError extends boolean = true>(options: Opt
  */
 export const listSensors = <ThrowOnError extends boolean = true>(options?: Options<ListSensorsData, ThrowOnError>): RequestResult<ListSensorsResponses, unknown, ThrowOnError> => (options?.client ?? client).get<ListSensorsResponses, unknown, ThrowOnError>({
     responseType: 'json',
-    url: '/api/sensors/',
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/sensors',
     ...options
 });
 
@@ -78,7 +79,7 @@ export const listSensors = <ThrowOnError extends boolean = true>(options?: Optio
 export const createSensor = <ThrowOnError extends boolean = true>(options: Options<CreateSensorData, ThrowOnError>): RequestResult<CreateSensorResponses, CreateSensorErrors, ThrowOnError> => (options.client ?? client).post<CreateSensorResponses, CreateSensorErrors, ThrowOnError>({
     responseType: 'json',
     security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/api/sensors/',
+    url: '/api/sensors',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -100,6 +101,7 @@ export const deleteSensor = <ThrowOnError extends boolean = true>(options: Optio
  */
 export const getSensor = <ThrowOnError extends boolean = true>(options: Options<GetSensorData, ThrowOnError>): RequestResult<GetSensorResponses, GetSensorErrors, ThrowOnError> => (options.client ?? client).get<GetSensorResponses, GetSensorErrors, ThrowOnError>({
     responseType: 'json',
+    security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/sensors/{sensor_id}',
     ...options
 });

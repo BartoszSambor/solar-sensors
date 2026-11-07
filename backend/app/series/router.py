@@ -1,5 +1,6 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Response, status
 
+from ..config import settings
 from ..dependencies import DbSession, login_required
 from .models import Series
 from .schemas import SeriesCreate, SeriesRead
@@ -36,9 +37,11 @@ def list_series(db: DbSession) -> list[Series]:
     status_code=status.HTTP_201_CREATED,
     dependencies=[login_required],
 )
-def create_series(series_in: SeriesCreate, db: DbSession) -> Series:
+def create_series(series_in: SeriesCreate, db: DbSession, response: Response) -> Series:
     _check_name_free(db, series_in.name)
-    return series_service.create_series(db, series_in)
+    series = series_service.create_series(db, series_in)
+    response.headers["Location"] = f"{settings.API_STR}/series/{series.id}"
+    return series
 
 
 @router.get("/{series_id}", response_model=SeriesRead)
@@ -50,6 +53,15 @@ def get_series(series_id: int, db: DbSession) -> Series:
 def update_series(series_id: int, series_in: SeriesCreate, db: DbSession) -> Series:
     series = _get_series_or_404(db, series_id)
     _check_name_free(db, series_in.name, series_id)
+    if series_service.has_measurements_outside(
+        db, series_id, series_in.min_value, series_in.max_value
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=(
+                "Existing measurements fall outside the new [minValue, maxValue] range"
+            ),
+        )
     return series_service.update_series(db, series, series_in)
 
 

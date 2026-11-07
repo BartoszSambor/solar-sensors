@@ -68,8 +68,10 @@ export type MeasurementCreate = {
     value: number;
     /**
      * Timestamp
+     *
+     * Defaults to the server's current time.
      */
-    timestamp: string;
+    timestamp?: string | null;
 };
 
 /**
@@ -87,7 +89,7 @@ export type MeasurementRead = {
     /**
      * Sensorid
      */
-    sensorId: number | null;
+    sensorId?: number | null;
     /**
      * Value
      */
@@ -189,16 +191,6 @@ export type SensorRead = {
 };
 
 /**
- * SensorsList
- */
-export type SensorsList = {
-    /**
-     * Sensors
-     */
-    sensors: Array<SensorRead>;
-};
-
-/**
  * SeriesCreate
  */
 export type SeriesCreate = {
@@ -220,12 +212,14 @@ export type SeriesCreate = {
     color: string;
     /**
      * Icon
+     *
+     * Optional icon or chart marker name
      */
-    icon: string;
+    icon?: string | null;
     /**
      * Unit
      */
-    unit: string;
+    unit?: string | null;
 };
 
 /**
@@ -250,12 +244,14 @@ export type SeriesRead = {
     color: string;
     /**
      * Icon
+     *
+     * Optional icon or chart marker name
      */
-    icon: string;
+    icon?: string | null;
     /**
      * Unit
      */
-    unit: string;
+    unit?: string | null;
     /**
      * Id
      */
@@ -458,14 +454,16 @@ export type ListSensorsData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/sensors/';
+    url: '/api/sensors';
 };
 
 export type ListSensorsResponses = {
     /**
+     * Response List Sensors
+     *
      * Successful Response
      */
-    200: SensorsList;
+    200: Array<SensorRead>;
 };
 
 export type ListSensorsResponse = ListSensorsResponses[keyof ListSensorsResponses];
@@ -474,7 +472,7 @@ export type CreateSensorData = {
     body: SensorCreate;
     path?: never;
     query?: never;
-    url: '/api/sensors/';
+    url: '/api/sensors';
 };
 
 export type CreateSensorErrors = {

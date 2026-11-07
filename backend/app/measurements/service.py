@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from datetime import datetime
+from datetime import UTC, datetime
 
 from sqlalchemy import case, or_, select, update
 from sqlalchemy.orm import Session
@@ -36,11 +36,12 @@ class MeasurementService:
     def create_measurement(
         self, db: Session, sensor: Sensor, measurement_in: MeasurementCreate
     ) -> Measurement:
+        timestamp = measurement_in.timestamp or datetime.now(UTC)
         measurement = Measurement(
             series_id=sensor.series_id,
             sensor_id=sensor.id,
             value=measurement_in.value,
-            timestamp=measurement_in.timestamp,
+            timestamp=timestamp,
         )
         db.add(measurement)
         # Only move forward: a late, older measurement keeps the newer time.
@@ -52,8 +53,8 @@ class MeasurementService:
             .values(
                 last_measurement_at=case(
                     (
-                        or_(newest.is_(None), newest < measurement_in.timestamp),
-                        measurement_in.timestamp,
+                        or_(newest.is_(None), newest < timestamp),
+                        timestamp,
                     ),
                     else_=newest,
                 )
